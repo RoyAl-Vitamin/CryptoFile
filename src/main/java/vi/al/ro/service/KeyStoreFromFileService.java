@@ -11,7 +11,7 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
-public final class KeyStoreService {
+public final class KeyStoreFromFileService {
 
     public static PublicKey readPublicKey(File publicKeyFile) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
         byte[] file = Files.readAllBytes(publicKeyFile.toPath());

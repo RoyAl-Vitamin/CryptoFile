@@ -7,7 +7,7 @@ import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import vi.al.ro.service.CryptographyService;
-import vi.al.ro.service.KeyStoreService;
+import vi.al.ro.service.KeyStoreFromFileService;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -66,7 +66,7 @@ public class DecryptionController {
         }
         PrivateKey privateKey = null;
         try {
-            privateKey = KeyStoreService.readPrivateKey(privateKeyFile);
+            privateKey = KeyStoreFromFileService.readPrivateKey(privateKeyFile);
         } catch (IOException | NoSuchAlgorithmException | InvalidKeySpecException e) {
             e.printStackTrace();
             return;
