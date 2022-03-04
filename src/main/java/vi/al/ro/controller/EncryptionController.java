@@ -6,27 +6,36 @@ import javafx.scene.Node;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import vi.al.ro.service.CryptographyService;
-import vi.al.ro.service.KeyStoreFromFileService;
+import vi.al.ro.service.KeyStorePkcs12Service;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
+import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
-import java.security.PublicKey;
-import java.security.spec.InvalidKeySpecException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
+
+import static vi.al.ro.constants.KeyStoreData.ALIAS;
+import static vi.al.ro.constants.KeyStoreData.PASSWORD;
 
 public class EncryptionController {
+
+    private static final Logger log = LogManager.getLogger(EncryptionController.class);
 
     @FXML
     private TextField tfFilePath;
 
     @FXML
     private TextField tfKeyPath;
+
+    private static final String TEMP_DIR = System.getProperty("java.io.tmpdir");
 
     private final FileChooser fileChooser = new FileChooser();
 
@@ -38,7 +47,10 @@ public class EncryptionController {
     void onFileOpenClick(ActionEvent event) {
         final Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         File file = fileChooser.showOpenDialog(stage);
-        tfFilePath.setText(file.getPath());
+        if (file != null) {
+            tfFilePath.setText(file.getPath());
+            log.info("File path {}", file.getPath());
+        }
     }
 
     /**
@@ -49,7 +61,10 @@ public class EncryptionController {
     void onKeyOpenClick(ActionEvent event) {
         final Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         File file = fileChooser.showOpenDialog(stage);
-        tfKeyPath.setText(file.getPath());
+        if (file != null) {
+            tfKeyPath.setText(file.getPath());
+            log.info("File path {}", file.getPath());
+        }
     }
 
     /**
@@ -58,25 +73,45 @@ public class EncryptionController {
      */
     @FXML
     void onEncryptClick(ActionEvent event) {
-        File publicKeyFile = new File(tfKeyPath.getText());
-        if (!publicKeyFile.exists() || publicKeyFile.isDirectory()) {
-            System.err.println("Error!");
+        File keyStoreFile = new File(tfKeyPath.getText());
+        if (!keyStoreFile.exists() || keyStoreFile.isDirectory()) {
+            log.error("Полученный файл хранилища ключей не существует или является директорией");
             return;
         }
-        PublicKey publicKey = null;
+        File inFile = new File(tfFilePath.getText());
+        if (!inFile.exists() || inFile.isDirectory()) {
+            log.error("Полученный файл для зашифровки не существует или является директорией");
+            return;
+        }
+        KeyStorePkcs12Service service;
         try {
-            publicKey = KeyStoreFromFileService.readPublicKey(publicKeyFile);
-        } catch (IOException | NoSuchAlgorithmException | InvalidKeySpecException e) {
-            e.printStackTrace();
+            service = new KeyStorePkcs12Service(ALIAS, PASSWORD, keyStoreFile);
+        } catch (CertificateException | IOException | NoSuchAlgorithmException | KeyStoreException | UnrecoverableKeyException e) {
+            log.error("", e);
             return;
         }
-        byte[] encryptedByteArray;
+//        KeyStoreGeneratorService service;
+//        try {
+//            service = new KeyStoreGeneratorService();
+//        } catch (NoSuchAlgorithmException e) {
+//            log.error("", e);
+//            return;
+//        }
+        File outFile = new File(TEMP_DIR, String.format("%s.encrypted", inFile.getName()));
         try {
-            encryptedByteArray = CryptographyService.encrypt(publicKey, "This is horosho!".getBytes(StandardCharsets.UTF_8));
-        } catch (NoSuchPaddingException | NoSuchAlgorithmException | InvalidKeyException | IllegalBlockSizeException | BadPaddingException e) {
-            e.printStackTrace();
+            if (!outFile.exists() && !outFile.createNewFile()) {
+                throw new IOException();
+            }
+        } catch (IOException e) {
+            log.error("", e);
             return;
         }
-        System.out.println("byte  array = [" + new String(encryptedByteArray) + "]");
+        try {
+            CryptographyService.encryptFile(inFile, outFile, service.getPublicKey());
+        } catch (NoSuchPaddingException | NoSuchAlgorithmException | IOException | InvalidKeyException | IllegalBlockSizeException | BadPaddingException e) {
+            log.error("", e);
+            return;
+        }
+        log.info("Encrypted file store in {} file size = {}", outFile.getAbsolutePath(), outFile.length());
     }
 }

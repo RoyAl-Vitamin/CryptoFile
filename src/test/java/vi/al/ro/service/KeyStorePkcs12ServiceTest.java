@@ -13,16 +13,14 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 
 import static org.junit.jupiter.api.Assertions.fail;
+import static vi.al.ro.constants.KeyStoreData.ALIAS;
+import static vi.al.ro.constants.KeyStoreData.PASSWORD;
 
 class KeyStorePkcs12ServiceTest {
 
     private static final Logger log = LogManager.getLogger(KeyStorePkcs12ServiceTest.class);
 
     private final KeyStorePkcs12Service service;
-
-    private static final String ALIAS = "exampleKey";
-
-    private static final String PASSWORD = "password";
 
     private static final String PATH_TO_KEYSTORE = "";
 
