@@ -11,11 +11,9 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("fxmlEncrypt.fxml"));
-//        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("fxmlDecrypt.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 480, 240);
-        stage.setTitle("Encryption!");
-//        stage.setTitle("Decryption!");
+        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("fxmlMain.fxml"));
+        Scene scene = new Scene(fxmlLoader.load());
+        stage.setTitle("CryptoFile");
         stage.setScene(scene);
         stage.show();
     }

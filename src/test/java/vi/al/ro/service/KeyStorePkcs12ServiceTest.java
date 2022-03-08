@@ -22,7 +22,7 @@ class KeyStorePkcs12ServiceTest {
 
     private final KeyStorePkcs12Service service;
 
-    private static final String PATH_TO_KEYSTORE = "";
+    private static final String PATH_TO_KEYSTORE = "C:\\Users\\rogozhnikov.aleksei.OTR\\IdeaProjects\\CryptoFile\\keystore.pfx";
 
     public KeyStorePkcs12ServiceTest() {
         try {
