@@ -22,7 +22,7 @@ public class MainController {
     @FXML
     private TabPane tabPane;
 
-    private static final Map<String, String> nameMap = Map.of("Encrypt", "fxmlEncrypt.fxml", "Decrypt", "fxmlDecrypt.fxml"/*, "Key Store", "fxmlKeyStore.fxml"*/);
+    private static final Map<String, String> nameMap = Map.of("Encrypt", "fxmlEncrypt.fxml", "Decrypt", "fxmlDecrypt.fxml", "Key Store", "fxmlKeyStore.fxml");
 
     @FXML
     void initialize() {
