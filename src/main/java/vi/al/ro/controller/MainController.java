@@ -1,7 +1,5 @@
 package vi.al.ro.controller;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -44,8 +42,8 @@ public class MainController {
                     URL url = MainController.class.getResource(nameMap.get(newValue.getText()));
                     Parent root = (Parent) FXMLLoader.load(Objects.requireNonNull(url));
                     newValue.setContent(root);
-                } catch (IOException ex) {
-                    log.error("", ex);
+                } catch (IOException e) {
+                    log.error("", e);
                 }
             } else {
                 // Content is already loaded. Update it if necessary.
