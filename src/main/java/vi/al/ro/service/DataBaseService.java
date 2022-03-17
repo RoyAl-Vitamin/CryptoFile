@@ -11,7 +11,7 @@ public class DataBaseService {
     private static final Logger log = LogManager.getLogger(DataBaseService.class);
 
 //    private static final String DB_URL = "jdbc:h2:mem:crypto";
-    private static final String DB_URL = "jdbc:h2:~/crypto";
+    private static final String DB_URL = "jdbc:h2:./crypto";
 
     private static final String PASSWORD = "password";
 

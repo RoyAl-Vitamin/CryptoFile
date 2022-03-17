@@ -5,6 +5,7 @@ target/
 !**/src/test/**/target/
 *.p12
 *.pfx
+*.db
 
 ### STS ###
 .apt_generated
