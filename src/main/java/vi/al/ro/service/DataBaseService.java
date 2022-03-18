@@ -2,9 +2,11 @@ package vi.al.ro.service;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import vi.al.ro.mapper.KeyStoreMapper;
 import vi.al.ro.model.KeyStoreEntity;
 
 import java.sql.*;
+import java.util.List;
 import java.util.Random;
 
 public class DataBaseService {
@@ -18,9 +20,11 @@ public class DataBaseService {
 
     private static final String USER = "user";
 
-    private static final String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS key_store(id BIGINT PRIMARY KEY, alias VARCHAR(255), password VARCHAR(255), path_file VARCHAR(255));";
+    private static final String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS key_store(id BIGINT PRIMARY KEY, alias VARCHAR(255), password VARCHAR(255), path_file VARCHAR(255) UNIQUE);";
 
     private static final String INSERT_INTO = "INSERT INTO key_store(id, alias, password, path_file) VALUES (?, ?, ?, ?)";
+
+    private static final String SELECT_ALL = "SELECT * FROM key_store";
 
     public static void init() throws ClassNotFoundException, SQLException {
         Class.forName("org.h2.Driver");
@@ -39,6 +43,16 @@ public class DataBaseService {
             statement.setString(3, entity.getPassword());
             statement.setString(4, entity.getPathToFile());
             return statement.executeUpdate();
+        } catch (SQLException e) {
+            log.error("", e);
+            throw e;
+        }
+    }
+
+    public static List<KeyStoreEntity> getAll() throws SQLException {
+        try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASSWORD);
+             Statement statement = connection.createStatement()) {
+            return KeyStoreMapper.toEntity(statement.executeQuery(SELECT_ALL));
         } catch (SQLException e) {
             log.error("", e);
             throw e;
