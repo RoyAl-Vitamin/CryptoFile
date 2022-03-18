@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 import vi.al.ro.model.KeyStoreEntity;
 
 import java.sql.*;
+import java.util.Random;
 
 public class DataBaseService {
 
@@ -29,7 +30,8 @@ public class DataBaseService {
         }
     }
 
-    public int save(KeyStoreEntity entity) throws SQLException {
+    public static int save(KeyStoreEntity entity) throws SQLException {
+        entity.setId(new Random().nextLong());
         try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASSWORD);
              PreparedStatement statement = connection.prepareStatement(INSERT_INTO);) {
             statement.setLong(1, entity.getId());
