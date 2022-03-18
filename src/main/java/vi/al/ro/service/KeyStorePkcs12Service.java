@@ -1,5 +1,9 @@
 package vi.al.ro.service;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.experimental.FieldDefaults;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -8,13 +12,15 @@ import java.security.*;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 
+@Getter
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public final class KeyStorePkcs12Service {
 
-    private final Certificate certificate;
+    Certificate certificate;
 
-    private final PrivateKey privateKey;
+    PrivateKey privateKey;
 
-    private final PublicKey publicKey;
+    PublicKey publicKey;
 
     public KeyStorePkcs12Service(String alias, String password, File keyStoreFile) throws CertificateException, IOException, NoSuchAlgorithmException, KeyStoreException, UnrecoverableKeyException {
         KeyStore store;
@@ -25,17 +31,5 @@ public final class KeyStorePkcs12Service {
         this.privateKey = (PrivateKey) store.getKey(alias, password.toCharArray());
         this.certificate = store.getCertificate(alias);
         this.publicKey = this.certificate.getPublicKey();
-    }
-
-    public Certificate getCertificate() {
-        return certificate;
-    }
-
-    public PrivateKey getPrivateKey() {
-        return privateKey;
-    }
-
-    public PublicKey getPublicKey() {
-        return publicKey;
     }
 }

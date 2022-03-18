@@ -30,6 +30,7 @@ public class KeyStoreController {
             return;
         }
         stage.setScene(scene);
+        stage.setTitle("Add KeyStore");
         stage.initOwner(parentStage);
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.showAndWait();
