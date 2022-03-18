@@ -4,7 +4,11 @@ public class KeyStoreEntity {
 
     private Long id;
 
-    private String pathToKeyStore;
+    private String alias;
+
+    private String password;
+
+    private String pathToFile;
 
     public Long getId() {
         return id;
@@ -14,11 +18,27 @@ public class KeyStoreEntity {
         this.id = id;
     }
 
-    public String getPathToKeyStore() {
-        return pathToKeyStore;
+    public String getAlias() {
+        return alias;
     }
 
-    public void setPathToKeyStore(String pathToKeyStore) {
-        this.pathToKeyStore = pathToKeyStore;
+    public void setAlias(String alias) {
+        this.alias = alias;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getPathToFile() {
+        return pathToFile;
+    }
+
+    public void setPathToFile(String pathToFile) {
+        this.pathToFile = pathToFile;
     }
 }

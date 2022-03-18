@@ -16,6 +16,7 @@ public class Main extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("fxmlMain.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
         stage.setTitle("CryptoFile");
+        stage.setResizable(false);
         stage.setScene(scene);
         stage.show();
     }
