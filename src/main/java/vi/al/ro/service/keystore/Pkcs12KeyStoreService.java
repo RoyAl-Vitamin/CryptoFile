@@ -1,8 +1,10 @@
-package vi.al.ro.service;
+package vi.al.ro.service.keystore;
 
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import vi.al.ro.service.keystore.KeyStoreService;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,7 +16,7 @@ import java.security.cert.CertificateException;
 
 @Getter
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
-public final class KeyStorePkcs12Service {
+public final class Pkcs12KeyStoreService implements KeyStoreService {
 
     Certificate certificate;
 
@@ -22,7 +24,8 @@ public final class KeyStorePkcs12Service {
 
     PublicKey publicKey;
 
-    public KeyStorePkcs12Service(String alias, String password, File keyStoreFile) throws CertificateException, IOException, NoSuchAlgorithmException, KeyStoreException, UnrecoverableKeyException {
+    public Pkcs12KeyStoreService(final String alias, final String password, final File keyStoreFile) throws CertificateException, IOException, NoSuchAlgorithmException, KeyStoreException, UnrecoverableKeyException {
+        Security.addProvider(new BouncyCastleProvider());
         KeyStore store;
         try (InputStream stream = new FileInputStream(keyStoreFile)) {
             store = KeyStore.getInstance("PKCS12");

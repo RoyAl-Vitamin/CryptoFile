@@ -22,7 +22,7 @@ public class MainController implements Initializable {
     @FXML
     private TabPane tabPane;
 
-    private static final Map<String, String> nameMap = Map.of("Encrypt", "fxmlEncrypt.fxml", "Decrypt", "fxmlDecrypt.fxml", "Key Store", "fxmlKeyStore.fxml");
+    private static final Map<String, String> TAB_MAP = Map.of("Encrypt", "fxmlEncrypt.fxml", "Decrypt", "fxmlDecrypt.fxml", "Key Store", "fxmlKeyStore.fxml");
 
     @Override
     public void initialize(URL url1, ResourceBundle resourceBundle) {
@@ -32,7 +32,7 @@ public class MainController implements Initializable {
         tabPane.getSelectionModel().clearSelection();
 
         // Add only tabs dynamically but not their content
-        for (Map.Entry<String, String> entry : nameMap.entrySet()) {
+        for (Map.Entry<String, String> entry : TAB_MAP.entrySet()) {
             tabPane.getTabs().add(new Tab(entry.getKey()));
         }
 
@@ -41,7 +41,7 @@ public class MainController implements Initializable {
             if (newValue.getContent() == null) {
                 try {
                     // Loading content on demand
-                    URL url = MainController.class.getResource(nameMap.get(newValue.getText()));
+                    URL url = MainController.class.getResource(TAB_MAP.get(newValue.getText()));
                     Parent root = (Parent) FXMLLoader.load(Objects.requireNonNull(url));
                     newValue.setContent(root);
                 } catch (IOException e) {

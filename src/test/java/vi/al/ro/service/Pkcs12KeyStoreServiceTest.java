@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import vi.al.ro.service.keystore.Pkcs12KeyStoreService;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,17 +17,17 @@ import static org.junit.jupiter.api.Assertions.fail;
 import static vi.al.ro.constants.KeyStoreData.ALIAS;
 import static vi.al.ro.constants.KeyStoreData.PASSWORD;
 
-class KeyStorePkcs12ServiceTest {
+class Pkcs12KeyStoreServiceTest {
 
-    private static final Logger log = LogManager.getLogger(KeyStorePkcs12ServiceTest.class);
+    private static final Logger log = LogManager.getLogger(Pkcs12KeyStoreServiceTest.class);
 
-    private final KeyStorePkcs12Service service;
+    private final Pkcs12KeyStoreService service;
 
     private static final String PATH_TO_KEYSTORE = "C:\\Users\\rogozhnikov.aleksei.OTR\\IdeaProjects\\CryptoFile\\keystore.pfx";
 
-    public KeyStorePkcs12ServiceTest() {
+    public Pkcs12KeyStoreServiceTest() {
         try {
-            this.service = new KeyStorePkcs12Service(ALIAS, PASSWORD, new File(PATH_TO_KEYSTORE));
+            this.service = new Pkcs12KeyStoreService(ALIAS, PASSWORD, new File(PATH_TO_KEYSTORE));
         } catch (CertificateException | IOException | NoSuchAlgorithmException | KeyStoreException | UnrecoverableKeyException e) {
             log.error("", e);
             fail(e);

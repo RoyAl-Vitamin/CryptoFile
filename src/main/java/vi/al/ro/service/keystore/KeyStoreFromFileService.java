@@ -1,4 +1,4 @@
-package vi.al.ro.service;
+package vi.al.ro.service.keystore;
 
 import java.io.File;
 import java.io.IOException;

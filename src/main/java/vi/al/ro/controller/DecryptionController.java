@@ -8,13 +8,13 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import vi.al.ro.service.CryptographyService;
-import vi.al.ro.service.KeyStorePkcs12Service;
+import vi.al.ro.service.cryptography.CryptographyService;
+import vi.al.ro.service.cryptography.JCECryptographyService;
+import vi.al.ro.service.keystore.KeyStoreService;
+import vi.al.ro.service.keystore.Pkcs12KeyStoreService;
 
-import javax.crypto.NoSuchPaddingException;
 import java.io.File;
 import java.io.IOException;
-import java.security.InvalidKeyException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
@@ -79,9 +79,9 @@ public class DecryptionController {
             log.error("Полученный файл для зашифровки не существует или является директорией");
             return;
         }
-        KeyStorePkcs12Service service;
+        KeyStoreService service;
         try {
-            service = new KeyStorePkcs12Service(ALIAS, PASSWORD, keyStoreFile);
+            service = new Pkcs12KeyStoreService(ALIAS, PASSWORD, keyStoreFile);
         } catch (CertificateException | IOException | NoSuchAlgorithmException | KeyStoreException | UnrecoverableKeyException e) {
             log.error("", e);
             return;
@@ -95,9 +95,10 @@ public class DecryptionController {
             log.error("", e);
             return;
         }
+        CryptographyService cryptographyService = new JCECryptographyService(service);
         try {
-            CryptographyService.decryptFile(inFile, outFile, service.getPrivateKey());
-        } catch (NoSuchPaddingException | NoSuchAlgorithmException | IOException | InvalidKeyException e) {
+            cryptographyService.decryptFile(inFile, outFile);
+        } catch (IOException e) {
             log.error("", e);
             return;
         }
