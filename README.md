@@ -1,5 +1,14 @@
 # CryptoFile
 
+## Develop
+
+Download JavaFX from [Gluon](https://gluonhq.com/products/javafx/) 17.0.2 version and unpack
+In Idea IDE set as VM option:
+
+```
+--module-path "\javaFX\unpack\sdk\javafx-sdk-17.0.2\lib" --add-modules javafx.controls,javafx.fxml
+```
+
 ## How to build
 
 Run in terminal via Maven
@@ -18,7 +27,7 @@ keytool -genkey -alias exampleKey -keyalg RSA -keysize 4096 -validity 365 -keyst
 
 See instruction:
 
-1. [link1](https://stackoverflow.com/a/62654500/9401964)
-2. [link2](https://stackoverflow.com/a/61341407/9401964)
-3. [link3](https://stackoverflow.com/a/61474494/9401964)
-4. [link4](https://stackoverflow.com/questions/68871952/how-to-use-jpackage-to-make-a-distribution-format-for-javafx-applications)
+1. [Debug](https://stackoverflow.com/a/62654500/9401964) javafx app 1;
+2. [Debug](https://stackoverflow.com/a/61341407/9401964) javafx app 2;
+3. [Debug](https://stackoverflow.com/a/61474494/9401964) javafx app 3;
+4. [Create](https://stackoverflow.com/questions/68871952/how-to-use-jpackage-to-make-a-distribution-format-for-javafx-applications) distribution file.
