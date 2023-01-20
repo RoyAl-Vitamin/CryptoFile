@@ -21,8 +21,14 @@ public class Main extends Application {
         stage.show();
     }
 
-    public static void main(String[] args) throws ClassNotFoundException, SQLException {
-        DataBaseService.init();
+    @Override
+    public void stop() throws Exception {
+        DataBaseService.close();
+        super.stop();
+    }
+
+    public static void main(String[] args) {
+        DataBaseService.getInstance();
         launch();
     }
 }

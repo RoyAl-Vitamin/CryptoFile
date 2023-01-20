@@ -1,20 +1,35 @@
 package vi.al.ro.service;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
+import org.jooq.DSLContext;
+import org.jooq.Result;
+import org.jooq.SQLDialect;
+import org.jooq.codegen.GenerationTool;
+import org.jooq.impl.DSL;
 import vi.al.ro.mapper.KeyStoreMapper;
 import vi.al.ro.model.KeyStoreEntity;
+import vi.al.ro.model.db.tables.records.KeyStoreRecord;
 
-import java.sql.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
+import java.util.stream.Collectors;
 
+import static vi.al.ro.model.db.Tables.KEY_STORE;
+
+@Log4j2
 public class DataBaseService {
 
-    private static final Logger log = LogManager.getLogger(DataBaseService.class);
-
-//    private static final String DB_URL = "jdbc:h2:mem:crypto";
-    private static final String DB_URL = "jdbc:h2:./crypto;CIPHER=AES";
+//    private static final String DB_URL = "jdbc:h2:mem:crypto"; // In memory db
+    private static final String DB_URL = "jdbc:h2:./crypto;CIPHER=AES"; // With encryption
+//    private static final String DB_URL = "jdbc:h2:./crypto"; // Without encryption
 
     private static final String PASSWORD = "password user_password";
 
@@ -22,40 +37,55 @@ public class DataBaseService {
 
     private static final String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS key_store(id BIGINT PRIMARY KEY, alias VARCHAR(255), password VARCHAR(255), path_file VARCHAR(255) UNIQUE);";
 
-    private static final String INSERT_INTO = "INSERT INTO key_store(id, alias, password, path_file) VALUES (?, ?, ?, ?)";
+    private final Connection connection;
 
-    private static final String SELECT_ALL = "SELECT * FROM key_store";
+    private final DSLContext context;
 
-    public static void init() throws ClassNotFoundException, SQLException {
-        Class.forName("org.h2.Driver");
-        try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASSWORD);
-             Statement statement = connection.createStatement();) {
-            statement.execute(CREATE_TABLE);
+    private static final DataBaseService service = new DataBaseService();
+
+    private DataBaseService() {
+        try {
+            // TODO заменить создание таблиц на liquibase or jooq
+            Class.forName("org.h2.Driver");
+            connection = DriverManager.getConnection(DB_URL, USER, PASSWORD);
+            try (Statement statement = connection.createStatement();) {
+                statement.execute(CREATE_TABLE);
+            }
+//            DSL.using("jdbc:url:something", "username", "password").close();
+            context = DSL.using(connection, SQLDialect.H2);
+
+            Path path = Paths.get(Objects.requireNonNull(DataBaseService.class.getClassLoader().getResource("jooq-config.xml")).toURI());
+            GenerationTool.generate(Files.readString(path));
+        } catch (Exception e) {
+            log.error("", e);
+            throw new RuntimeException(e);
         }
     }
 
-    public static int save(KeyStoreEntity entity) throws SQLException {
-        entity.setId(new Random().nextLong());
-        try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASSWORD);
-             PreparedStatement statement = connection.prepareStatement(INSERT_INTO);) {
-            statement.setLong(1, entity.getId());
-            statement.setString(2, entity.getAlias());
-            statement.setString(3, entity.getPassword());
-            statement.setString(4, entity.getPathToFile());
-            return statement.executeUpdate();
-        } catch (SQLException e) {
-            log.error("", e);
-            throw e;
-        }
+    public int save(String alias, String password, String pathToFile) throws SQLException {
+        KeyStoreRecord keyStoreRecord = context.newRecord(KEY_STORE);
+        long id = new Random().nextLong();
+        keyStoreRecord.setId(id);
+        keyStoreRecord.setAlias(alias);
+        keyStoreRecord.setPassword(password);
+        keyStoreRecord.setPathFile(pathToFile);
+        return keyStoreRecord.store();
     }
 
-    public static List<KeyStoreEntity> getAll() throws SQLException {
-        try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASSWORD);
-             Statement statement = connection.createStatement()) {
-            return KeyStoreMapper.toEntity(statement.executeQuery(SELECT_ALL));
+    public List<KeyStoreEntity> getAll() throws SQLException {
+        Result<KeyStoreRecord> keyStoreRecords = context.selectFrom(KEY_STORE).fetch();
+        return keyStoreRecords.stream().map(KeyStoreMapper::toEntity).collect(Collectors.toList());
+    }
+
+    public static DataBaseService getInstance() {
+        return service;
+    }
+
+    public static void close() {
+        try {
+            service.connection.close();
         } catch (SQLException e) {
             log.error("", e);
-            throw e;
         }
     }
 }

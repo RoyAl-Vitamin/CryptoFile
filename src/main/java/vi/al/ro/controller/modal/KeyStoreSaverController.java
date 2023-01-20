@@ -5,16 +5,13 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import vi.al.ro.model.KeyStoreEntity;
+import lombok.extern.log4j.Log4j2;
 import vi.al.ro.service.DataBaseService;
 
 import java.sql.SQLException;
 
+@Log4j2
 public class KeyStoreSaverController {
-
-    private static final Logger log = LogManager.getLogger(KeyStoreSaverController.class);
 
     @FXML
     private TextField tfAlias;
@@ -27,12 +24,8 @@ public class KeyStoreSaverController {
 
     @FXML
     void onSaveClick(ActionEvent event) {
-        KeyStoreEntity entity = new KeyStoreEntity();
-        entity.setAlias(tfAlias.getText());
-        entity.setPassword(tfPassword.getText());
-        entity.setPathToFile(tfPath.getText());
         try {
-            DataBaseService.save(entity);
+            DataBaseService.getInstance().save(tfAlias.getText(), tfPassword.getText(), tfPath.getText());
             log.info("Save in DB!");
         } catch (SQLException e) {
             log.error("", e);

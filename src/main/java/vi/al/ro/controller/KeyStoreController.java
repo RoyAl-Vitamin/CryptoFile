@@ -59,7 +59,7 @@ public class KeyStoreController implements Initializable {
         stage.showAndWait();
         log.info("NEED UPDATE!");
         try {
-            keyStoreModels.addAll(DataBaseService.getAll().stream().map(KeyStoreModel::new).collect(Collectors.toList()));
+            keyStoreModels.addAll(DataBaseService.getInstance().getAll().stream().map(KeyStoreModel::new).collect(Collectors.toList()));
 //            studentsModels = FXCollections.observableArrayList(DataBaseService.getAll().stream().map(KeyStoreModel::new).collect(Collectors.toList()));
         } catch (SQLException e) {
             log.error("", e);
@@ -71,7 +71,7 @@ public class KeyStoreController implements Initializable {
         tcName.setCellValueFactory(new PropertyValueFactory<>("Name"));
         tcNeedPassword.setCellValueFactory(new PropertyValueFactory<>("NeedPassword"));
         try {
-            keyStoreModels = FXCollections.observableArrayList(DataBaseService.getAll().stream().map(KeyStoreModel::new).collect(Collectors.toList()));
+            keyStoreModels = FXCollections.observableArrayList(DataBaseService.getInstance().getAll().stream().map(KeyStoreModel::new).collect(Collectors.toList()));
         } catch (SQLException e) {
             log.error("", e);
         }

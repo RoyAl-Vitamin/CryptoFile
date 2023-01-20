@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<configuration xmlns="http://www.jooq.org/xsd/jooq-codegen-3.13.0.xsd">
+
+    <jdbc>
+        <driver>org.h2.Driver</driver>
+        <url>jdbc:h2:./crypto;CIPHER=AES</url>
+        <user>user</user>
+        <password>password user_password</password>
+    </jdbc>
+
+    <generator>
+        <name>org.jooq.codegen.JavaGenerator</name>
+
+        <database>
+            <name>org.jooq.meta.h2.H2Database</name>
+            <inputSchema>PUBLIC</inputSchema>
+            <includes>.*</includes>
+            <excludes></excludes>
+        </database>
+
+        <target>
+            <packageName>vi.al.ro.model.db</packageName>
+            <directory>./target/generated-sources/jooq</directory>
+        </target>
+    </generator>
+</configuration>

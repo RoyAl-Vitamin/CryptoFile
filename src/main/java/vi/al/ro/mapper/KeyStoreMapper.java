@@ -1,26 +1,18 @@
 package vi.al.ro.mapper;
 
 import vi.al.ro.model.KeyStoreEntity;
+import vi.al.ro.model.db.tables.records.KeyStoreRecord;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+import static vi.al.ro.model.db.Tables.KEY_STORE;
 
 public class KeyStoreMapper {
 
-    public static List<KeyStoreEntity> toEntity(ResultSet rs) throws SQLException {
-        List<KeyStoreEntity> list = new ArrayList<>(rs.getFetchSize());
-
-        while (rs.next()) {
-            KeyStoreEntity entity = new KeyStoreEntity();
-            entity.setId(rs.getLong("id"));
-            entity.setAlias(rs.getString("alias"));
-            entity.setPassword(rs.getString("password"));
-            entity.setPathToFile(rs.getString("path_file"));
-            list.add(entity);
-        }
-
-        return list;
+    public static KeyStoreEntity toEntity(KeyStoreRecord element) {
+        KeyStoreEntity entity = new KeyStoreEntity();
+        entity.setId(element.get(KEY_STORE.ID));
+        entity.setAlias(element.get(KEY_STORE.ALIAS));
+        entity.setPassword(element.get(KEY_STORE.PASSWORD));
+        entity.setPathToFile(element.get(KEY_STORE.PATH_FILE));
+        return entity;
     }
 }
