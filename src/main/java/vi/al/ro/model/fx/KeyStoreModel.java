@@ -1,18 +1,15 @@
 package vi.al.ro.model.fx;
 
 import javafx.beans.property.SimpleStringProperty;
-import lombok.AccessLevel;
-import lombok.experimental.FieldDefaults;
 import vi.al.ro.model.KeyStoreEntity;
 
-@FieldDefaults(level = AccessLevel.PRIVATE)
 public class KeyStoreModel {
 
-    SimpleStringProperty name;
+    private SimpleStringProperty name;
 
-    SimpleStringProperty needPassword;
+    private SimpleStringProperty needPassword;
 
-    public KeyStoreModel(KeyStoreEntity keyStoreEntity) {
+    public KeyStoreModel(final KeyStoreEntity keyStoreEntity) {
         this.name = new SimpleStringProperty(keyStoreEntity.getPathToFile());
         if (keyStoreEntity.getPassword() == null || keyStoreEntity.getPassword().isBlank()) {
             this.needPassword = new SimpleStringProperty("No");

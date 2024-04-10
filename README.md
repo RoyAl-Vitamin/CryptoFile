@@ -2,7 +2,7 @@
 
 ## Develop
 
-Download JavaFX from [Gluon](https://gluonhq.com/products/javafx/) 17.0.2 version and unpack
+Download JavaFX from [Gluon](https://gluonhq.com/products/javafx/) 21 version and unpack
 In Idea IDE set as VM option:
 
 ```

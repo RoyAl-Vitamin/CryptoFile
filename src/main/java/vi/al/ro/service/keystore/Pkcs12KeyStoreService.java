@@ -1,10 +1,7 @@
 package vi.al.ro.service.keystore;
 
-import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.experimental.FieldDefaults;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import vi.al.ro.service.keystore.KeyStoreService;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,14 +12,13 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 
 @Getter
-@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public final class Pkcs12KeyStoreService implements KeyStoreService {
 
-    Certificate certificate;
+    private final Certificate certificate;
 
-    PrivateKey privateKey;
+    private final PrivateKey privateKey;
 
-    PublicKey publicKey;
+    private final PublicKey publicKey;
 
     public Pkcs12KeyStoreService(final String alias, final String password, final File keyStoreFile) throws CertificateException, IOException, NoSuchAlgorithmException, KeyStoreException, UnrecoverableKeyException {
         Security.addProvider(new BouncyCastleProvider());

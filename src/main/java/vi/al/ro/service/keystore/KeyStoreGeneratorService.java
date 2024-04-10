@@ -1,8 +1,6 @@
 package vi.al.ro.service.keystore;
 
-import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.experimental.FieldDefaults;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.BasicConstraints;
@@ -13,7 +11,6 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
-import vi.al.ro.service.keystore.KeyStoreService;
 
 import java.math.BigInteger;
 import java.security.*;
@@ -23,14 +20,13 @@ import java.util.Calendar;
 import java.util.Date;
 
 @Getter
-@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public final class KeyStoreGeneratorService implements KeyStoreService {
 
-    X509Certificate certificate;
+    private final X509Certificate certificate;
 
-    PrivateKey privateKey;
+    private final PrivateKey privateKey;
 
-    PublicKey publicKey;
+    private final PublicKey publicKey;
 
     public KeyStoreGeneratorService() throws NoSuchAlgorithmException, NoSuchProviderException, CertIOException, CertificateException, OperatorCreationException {
         Provider bcProvider = new BouncyCastleProvider();

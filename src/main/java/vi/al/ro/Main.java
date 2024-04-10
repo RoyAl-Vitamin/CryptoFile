@@ -7,7 +7,6 @@ import javafx.stage.Stage;
 import vi.al.ro.service.DataBaseService;
 
 import java.io.IOException;
-import java.sql.SQLException;
 
 public class Main extends Application {
 
