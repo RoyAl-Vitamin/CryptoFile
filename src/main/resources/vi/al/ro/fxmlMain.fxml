@@ -7,4 +7,5 @@
     <Tab fx:id="tabEncrypt" text="Encrypt" />
     <Tab fx:id="tabDecrypt" text="Decrypt" />
     <Tab fx:id="tabKeyStore" text="Key Store" />
+    <Tab fx:id="tabMessageDigest" text="Message Digest" />
 </TabPane>

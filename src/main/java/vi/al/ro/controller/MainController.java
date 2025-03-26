@@ -5,16 +5,14 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.control.Tab;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+@Log4j2
 public class MainController implements Initializable {
-
-    private static final Logger log = LogManager.getLogger(MainController.class);
 
     @FXML
     private Tab tabDecrypt;
@@ -25,11 +23,15 @@ public class MainController implements Initializable {
     @FXML
     private Tab tabKeyStore;
 
+    @FXML
+    private Tab tabMessageDigest;
+
     @Override
-    public void initialize(URL url1, ResourceBundle resourceBundle) {
+    public void initialize(URL url, ResourceBundle resourceBundle) {
         tabEncrypt.setContent(getEncryptParent());
         tabDecrypt.setContent(getDecryptParent());
         tabKeyStore.setContent(getKeyStoreParent());
+        tabMessageDigest.setContent(getMessageDigestParent());
     }
 
     private Parent getEncryptParent() {
@@ -42,6 +44,10 @@ public class MainController implements Initializable {
 
     private Parent getKeyStoreParent() {
         return getParent(MainController.class.getResource("fxmlKeyStore.fxml"), new KeyStoreController());
+    }
+
+    private Parent getMessageDigestParent() {
+        return getParent(MainController.class.getResource("fxmlMessageDigest.fxml"), new MessageDigestController());
     }
 
     private Parent getParent(URL fxmlUrl, Object controller) {

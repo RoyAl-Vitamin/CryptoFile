@@ -1,8 +1,7 @@
 package vi.al.ro.service.cryptography;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 import vi.al.ro.service.keystore.KeyStoreService;
 
 import javax.crypto.*;
@@ -16,10 +15,9 @@ import java.security.PublicKey;
  * Замечание, можно зашифровать только (key_size_in_bits) / 8 - 11 байт
  * так для ключа 2048 bits максимальный размер данных 256 байт (-11 если используется смещение)
  */
+@Log4j2
 @RequiredArgsConstructor
 public final class JCECryptographyService implements CryptographyService {
-
-    private static final Logger log = LogManager.getLogger(JCECryptographyService.class);
 
     private final KeyStoreService keyStoreService;
 

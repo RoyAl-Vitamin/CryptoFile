@@ -2,19 +2,16 @@ package vi.al.ro.service;
 
 import lombok.extern.log4j.Log4j2;
 import org.jooq.CloseableDSLContext;
-import org.jooq.Result;
 import org.jooq.impl.DSL;
 import vi.al.ro.mapper.KeyStoreMapper;
-import vi.al.ro.model.KeyStoreEntity;
-import vi.al.ro.model.db.tables.records.KeyStoreRecord;
+import vi.al.ro.model.db.KeyStoreEntity;
 
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Random;
-import java.util.stream.Collectors;
 
 import static org.jooq.impl.SQLDataType.BIGINT;
 import static org.jooq.impl.SQLDataType.VARCHAR;
+import static vi.al.ro.model.db.Sequences.SEQ_KEY_STORE;
 import static vi.al.ro.model.db.Tables.KEY_STORE;
 
 @Log4j2
@@ -28,7 +25,7 @@ public class DataBaseService {
 
     private static final String USER = "user";
 
-    private final CloseableDSLContext context;
+    private final CloseableDSLContext dslContext;
 
     private static final DataBaseService service = new DataBaseService();
 
@@ -40,9 +37,13 @@ public class DataBaseService {
             throw new RuntimeException(e);
         }
 
-        context = DSL.using(DB_URL, USER, PASSWORD);
-        context.createTableIfNotExists("key_store")
-                .column("id", BIGINT)
+        this.dslContext = DSL.using(DB_URL, USER, PASSWORD);
+        this.dslContext.createSequenceIfNotExists("seq_key_store")
+                .minvalue(1)
+                .startWith(1)
+                .execute();
+        this.dslContext.createTableIfNotExists("key_store")
+                .column("id", BIGINT.notNull().defaultValue(SEQ_KEY_STORE.nextval()))
                 .column("alias", VARCHAR(255))
                 .column("password", VARCHAR(255))
                 .column("path_file", VARCHAR(255))
@@ -51,19 +52,17 @@ public class DataBaseService {
                 .execute();
     }
 
-    public int save(String alias, String password, String pathToFile) throws SQLException {
-        KeyStoreRecord keyStoreRecord = context.newRecord(KEY_STORE);
-        long id = new Random().nextLong();
-        keyStoreRecord.setId(id);
-        keyStoreRecord.setAlias(alias);
-        keyStoreRecord.setPassword(password);
-        keyStoreRecord.setPathFile(pathToFile);
-        return keyStoreRecord.store();
+    public int insert(String alias, String password, String pathToFile) throws SQLException {
+        return dslContext.insertInto(KEY_STORE)
+                .set(KEY_STORE.ID, SEQ_KEY_STORE.nextval())
+                .set(KEY_STORE.ALIAS, alias)
+                .set(KEY_STORE.PASSWORD, password)
+                .set(KEY_STORE.PATH_FILE, pathToFile)
+                .execute();
     }
 
     public List<KeyStoreEntity> getAll() throws SQLException {
-        Result<KeyStoreRecord> keyStoreRecords = context.selectFrom(KEY_STORE).fetch();
-        return keyStoreRecords.stream().map(KeyStoreMapper::toEntity).collect(Collectors.toList());
+        return dslContext.selectFrom(KEY_STORE).fetch(KeyStoreMapper::toEntity);
     }
 
     public static DataBaseService getInstance() {
@@ -71,6 +70,6 @@ public class DataBaseService {
     }
 
     public static void close() {
-        service.context.close();
+        service.dslContext.close();
     }
 }

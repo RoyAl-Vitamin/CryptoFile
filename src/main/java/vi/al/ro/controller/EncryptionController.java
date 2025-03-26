@@ -6,8 +6,7 @@ import javafx.scene.Node;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 import vi.al.ro.service.cryptography.CryptographyService;
 import vi.al.ro.service.cryptography.JCECryptographyService;
 import vi.al.ro.service.keystore.KeyStoreService;
@@ -23,9 +22,8 @@ import java.security.cert.CertificateException;
 import static vi.al.ro.constants.KeyStoreData.ALIAS;
 import static vi.al.ro.constants.KeyStoreData.PASSWORD;
 
+@Log4j2
 public class EncryptionController {
-
-    private static final Logger log = LogManager.getLogger(EncryptionController.class);
 
     @FXML
     private TextField tfFilePath;

@@ -13,8 +13,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 import vi.al.ro.controller.modal.KeyStoreSaverController;
 import vi.al.ro.model.fx.KeyStoreModel;
 import vi.al.ro.service.DataBaseService;
@@ -25,9 +24,8 @@ import java.sql.SQLException;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
+@Log4j2
 public class KeyStoreController implements Initializable {
-
-    private static final Logger log = LogManager.getLogger(KeyStoreController.class);
 
     @FXML
     private TableColumn<KeyStoreModel, String> tcName;

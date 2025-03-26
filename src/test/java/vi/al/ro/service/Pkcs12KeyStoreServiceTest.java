@@ -1,7 +1,6 @@
 package vi.al.ro.service;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import vi.al.ro.service.keystore.Pkcs12KeyStoreService;
@@ -17,9 +16,8 @@ import static org.junit.jupiter.api.Assertions.fail;
 import static vi.al.ro.constants.KeyStoreData.ALIAS;
 import static vi.al.ro.constants.KeyStoreData.PASSWORD;
 
+@Log4j2
 class Pkcs12KeyStoreServiceTest {
-
-    private static final Logger log = LogManager.getLogger(Pkcs12KeyStoreServiceTest.class);
 
     private final Pkcs12KeyStoreService service;
 

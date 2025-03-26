@@ -1,7 +1,7 @@
 package vi.al.ro.model.fx;
 
 import javafx.beans.property.SimpleStringProperty;
-import vi.al.ro.model.KeyStoreEntity;
+import vi.al.ro.model.db.KeyStoreEntity;
 
 public class KeyStoreModel {
 

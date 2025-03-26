@@ -25,7 +25,7 @@ public class KeyStoreSaverController {
     @FXML
     void onSaveClick(ActionEvent event) {
         try {
-            DataBaseService.getInstance().save(tfAlias.getText(), tfPassword.getText(), tfPath.getText());
+            DataBaseService.getInstance().insert(tfAlias.getText(), tfPassword.getText(), tfPath.getText());
             log.info("Save in DB!");
         } catch (SQLException e) {
             log.error("", e);

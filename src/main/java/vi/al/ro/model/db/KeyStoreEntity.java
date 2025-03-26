@@ -1,4 +1,4 @@
-package vi.al.ro.model;
+package vi.al.ro.model.db;
 
 import lombok.Getter;
 import lombok.Setter;

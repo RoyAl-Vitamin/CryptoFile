@@ -11,19 +11,19 @@ In Idea IDE set as VM option:
 
 ## How to generate classes
 
-```termional
+```shell
 mvn jooq-codegen:generate
 ```
 
 ## How to build
 
-```termional
+```shell
 mvn clean javafx:run
 ```
 
 ## How to generate keypair using java keytool
 
-```terminal
+```shell
 keytool -genkey -alias exampleKey -keyalg RSA -keysize 4096 -validity 365 -keystore keystore.pfx -storetype PKCS12
 ```
 

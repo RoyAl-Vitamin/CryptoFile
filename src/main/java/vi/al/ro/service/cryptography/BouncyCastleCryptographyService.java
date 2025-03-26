@@ -1,8 +1,7 @@
 package vi.al.ro.service.cryptography;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 import org.bouncycastle.cms.*;
 import org.bouncycastle.cms.jcajce.JceCMSContentEncryptorBuilder;
 import org.bouncycastle.cms.jcajce.JceKeyTransEnvelopedRecipient;
@@ -16,10 +15,9 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
 
+@Log4j2
 @RequiredArgsConstructor
 public final class BouncyCastleCryptographyService implements CryptographyService {
-
-    private static final Logger log = LogManager.getLogger(BouncyCastleCryptographyService.class);
 
     private final KeyStoreService keyStoreService;
 

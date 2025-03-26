@@ -1,6 +1,6 @@
 package vi.al.ro.mapper;
 
-import vi.al.ro.model.KeyStoreEntity;
+import vi.al.ro.model.db.KeyStoreEntity;
 import vi.al.ro.model.db.tables.records.KeyStoreRecord;
 
 import static vi.al.ro.model.db.Tables.KEY_STORE;
