@@ -8,7 +8,7 @@ import org.bouncycastle.cms.jcajce.JceKeyTransEnvelopedRecipient;
 import org.bouncycastle.cms.jcajce.JceKeyTransRecipient;
 import org.bouncycastle.cms.jcajce.JceKeyTransRecipientInfoGenerator;
 import org.bouncycastle.operator.OutputEncryptor;
-import vi.al.ro.service.keystore.KeyStoreService;
+import vi.al.ro.service.key.asymmetric.AsymmetricKeyService;
 
 import java.io.*;
 import java.security.cert.CertificateEncodingException;
@@ -19,7 +19,7 @@ import java.util.Collection;
 @RequiredArgsConstructor
 public final class BouncyCastleCryptographyService implements CryptographyService {
 
-    private final KeyStoreService keyStoreService;
+    private final AsymmetricKeyService asymmetricKeyStoreService;
 
     @Override
     public void encryptFile(File inFile, File outFile) throws IOException {
@@ -27,7 +27,7 @@ public final class BouncyCastleCryptographyService implements CryptographyServic
 
         try (InputStream is = new FileInputStream(inFile);
              OutputStream os = new FileOutputStream(outFile);) {
-            JceKeyTransRecipientInfoGenerator jceKey = new JceKeyTransRecipientInfoGenerator((X509Certificate) keyStoreService.getCertificate());
+            JceKeyTransRecipientInfoGenerator jceKey = new JceKeyTransRecipientInfoGenerator((X509Certificate) asymmetricKeyStoreService.getCertificate());
             cmsEnvelopedDataGenerator.addRecipientInfoGenerator(jceKey);
 
             CMSTypedData msg = new CMSProcessableByteArray(is.readAllBytes());
@@ -48,7 +48,7 @@ public final class BouncyCastleCryptographyService implements CryptographyServic
 
             Collection<RecipientInformation> recipients = envelopedData.getRecipientInfos().getRecipients();
             KeyTransRecipientInformation recipientInfo = (KeyTransRecipientInformation) recipients.iterator().next();
-            JceKeyTransRecipient recipient = new JceKeyTransEnvelopedRecipient(keyStoreService.getPrivateKey());
+            JceKeyTransRecipient recipient = new JceKeyTransEnvelopedRecipient(asymmetricKeyStoreService.getPrivateKey());
 
             os.write(recipientInfo.getContent(recipient));
         } catch (CMSException e) {

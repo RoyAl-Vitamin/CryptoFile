@@ -1,4 +1,4 @@
-package vi.al.ro.service.keystore;
+package vi.al.ro.service.key.asymmetric;
 
 import lombok.Getter;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
@@ -20,7 +20,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 @Getter
-public final class KeyStoreGeneratorService implements KeyStoreService {
+public final class RsaKeyGeneratorService implements AsymmetricKeyService {
 
     private final X509Certificate certificate;
 
@@ -28,7 +28,7 @@ public final class KeyStoreGeneratorService implements KeyStoreService {
 
     private final PublicKey publicKey;
 
-    public KeyStoreGeneratorService() throws NoSuchAlgorithmException, NoSuchProviderException, CertIOException, CertificateException, OperatorCreationException {
+    public RsaKeyGeneratorService() throws NoSuchAlgorithmException, NoSuchProviderException, CertIOException, CertificateException, OperatorCreationException {
         Provider bcProvider = new BouncyCastleProvider();
         Security.addProvider(bcProvider);
         KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA", "BC");

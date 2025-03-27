@@ -2,7 +2,7 @@ package vi.al.ro.service.cryptography;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import vi.al.ro.service.keystore.KeyStoreService;
+import vi.al.ro.service.key.asymmetric.AsymmetricKeyService;
 
 import javax.crypto.*;
 import java.io.*;
@@ -19,14 +19,14 @@ import java.security.PublicKey;
 @RequiredArgsConstructor
 public final class JCECryptographyService implements CryptographyService {
 
-    private final KeyStoreService keyStoreService;
+    private final AsymmetricKeyService asymmetricKeyStoreService;
 
     @Override
     public void encryptFile(File inFile, File outFile) throws IOException {
         Cipher cipher = null;
         try {
             cipher = Cipher.getInstance("RSA");
-            cipher.init(Cipher.ENCRYPT_MODE, keyStoreService.getPublicKey());
+            cipher.init(Cipher.ENCRYPT_MODE, asymmetricKeyStoreService.getPublicKey());
         } catch (InvalidKeyException | NoSuchPaddingException | NoSuchAlgorithmException e) {
             log.error(e);
             throw new IOException(e);
@@ -48,7 +48,7 @@ public final class JCECryptographyService implements CryptographyService {
         Cipher cipher = null;
         try {
             cipher = Cipher.getInstance("RSA");
-            cipher.init(Cipher.DECRYPT_MODE, keyStoreService.getPrivateKey());
+            cipher.init(Cipher.DECRYPT_MODE, asymmetricKeyStoreService.getPrivateKey());
         } catch (InvalidKeyException | NoSuchPaddingException | NoSuchAlgorithmException e) {
             log.error(e);
             throw new IOException(e);

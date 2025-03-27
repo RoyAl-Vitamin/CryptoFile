@@ -8,19 +8,10 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import lombok.extern.log4j.Log4j2;
 import vi.al.ro.service.cryptography.CryptographyService;
-import vi.al.ro.service.cryptography.JCECryptographyService;
-import vi.al.ro.service.keystore.KeyStoreService;
-import vi.al.ro.service.keystore.Pkcs12KeyStoreService;
+import vi.al.ro.service.cryptography.DesEcbPkcs5PaddingCryptographyService;
 
 import java.io.File;
 import java.io.IOException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.UnrecoverableKeyException;
-import java.security.cert.CertificateException;
-
-import static vi.al.ro.constants.KeyStoreData.ALIAS;
-import static vi.al.ro.constants.KeyStoreData.PASSWORD;
 
 @Log4j2
 public class EncryptionController {
@@ -69,23 +60,23 @@ public class EncryptionController {
      */
     @FXML
     void onEncryptClick(ActionEvent event) {
-        File keyStoreFile = new File(tfKeyPath.getText());
-        if (!keyStoreFile.exists() || keyStoreFile.isDirectory()) {
-            log.error("Полученный файл хранилища ключей не существует или является директорией");
-            return;
-        }
+//        File keyStoreFile = new File(tfKeyPath.getText());
+//        if (!keyStoreFile.exists() || keyStoreFile.isDirectory()) {
+//            log.error("Полученный файл хранилища ключей не существует или является директорией");
+//            return;
+//        }
         File inFile = new File(tfFilePath.getText());
         if (!inFile.exists() || inFile.isDirectory()) {
             log.error("Полученный файл для зашифровки не существует или является директорией");
             return;
         }
-        KeyStoreService service;
-        try {
-            service = new Pkcs12KeyStoreService(ALIAS, PASSWORD, keyStoreFile);
-        } catch (CertificateException | IOException | NoSuchAlgorithmException | KeyStoreException | UnrecoverableKeyException e) {
-            log.error("", e);
-            return;
-        }
+//        KeyStoreService service;
+//        try {
+//            service = new Pkcs12KeyStoreService(ALIAS, PASSWORD, keyStoreFile);
+//        } catch (CertificateException | IOException | NoSuchAlgorithmException | KeyStoreException | UnrecoverableKeyException e) {
+//            log.error("", e);
+//            return;
+//        }
 //        KeyStoreGeneratorService service;
 //        try {
 //            service = new KeyStoreGeneratorService();
@@ -102,7 +93,8 @@ public class EncryptionController {
             log.error("", e);
             return;
         }
-        CryptographyService cryptographyService = new JCECryptographyService(service);
+//        CryptographyService cryptographyService = new JCECryptographyService(service);
+        CryptographyService cryptographyService = new DesEcbPkcs5PaddingCryptographyService();
         try {
             cryptographyService.encryptFile(inFile, outFile);
         } catch (IOException e) {

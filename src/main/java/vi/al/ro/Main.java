@@ -4,15 +4,19 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import vi.al.ro.controller.MainController;
 import vi.al.ro.service.DataBaseService;
 
 import java.io.IOException;
+import java.security.Security;
 
 public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
+        Security.addProvider(new BouncyCastleProvider());
+
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("fxmlMain.fxml"));
         fxmlLoader.setController(new MainController());
         Scene scene = new Scene(fxmlLoader.load());

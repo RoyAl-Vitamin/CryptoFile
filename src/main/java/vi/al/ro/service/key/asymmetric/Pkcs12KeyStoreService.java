@@ -1,7 +1,6 @@
-package vi.al.ro.service.keystore;
+package vi.al.ro.service.key.asymmetric;
 
 import lombok.Getter;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -12,7 +11,7 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 
 @Getter
-public final class Pkcs12KeyStoreService implements KeyStoreService {
+public final class Pkcs12KeyStoreService implements AsymmetricKeyService {
 
     private final Certificate certificate;
 
@@ -21,7 +20,6 @@ public final class Pkcs12KeyStoreService implements KeyStoreService {
     private final PublicKey publicKey;
 
     public Pkcs12KeyStoreService(final String alias, final String password, final File keyStoreFile) throws CertificateException, IOException, NoSuchAlgorithmException, KeyStoreException, UnrecoverableKeyException {
-        Security.addProvider(new BouncyCastleProvider());
         KeyStore store;
         try (InputStream stream = new FileInputStream(keyStoreFile)) {
             store = KeyStore.getInstance("PKCS12");

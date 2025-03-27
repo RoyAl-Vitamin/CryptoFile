@@ -1,4 +1,4 @@
-package vi.al.ro.service.keystore;
+package vi.al.ro.service.key.asymmetric;
 
 import java.io.File;
 import java.io.IOException;

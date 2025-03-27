@@ -1,6 +1,8 @@
 package vi.al.ro.service.cryptography;
 
 import lombok.extern.log4j.Log4j2;
+import vi.al.ro.service.key.symmetric.DesKeyGeneratorService;
+import vi.al.ro.service.key.symmetric.SymmetricKeyService;
 import vi.al.ro.service.util.Base64Service;
 import vi.al.ro.service.util.BouncyCastleBase64Service;
 
@@ -15,11 +17,24 @@ import java.security.SecureRandom;
 @Log4j2
 public class DesEcbPkcs5PaddingCryptographyService implements CryptographyService {
 
-    private final Base64Service base64Service = new BouncyCastleBase64Service();
+    private final Base64Service base64Service;
+
+    private final SymmetricKeyService symmetricKeyService;
+
+    public DesEcbPkcs5PaddingCryptographyService() {
+        this.base64Service = new BouncyCastleBase64Service();
+        try {
+            this.symmetricKeyService = new DesKeyGeneratorService();
+        } catch (NoSuchAlgorithmException e) {
+            log.error("", e);
+            throw new RuntimeException(e);
+        }
+    }
 
     @Override
     public void encryptFile(File inFile, File outFile) throws IOException {
         Cipher cipher = getCipher();
+//        Key key = symmetricKeyService.getKey();
         Key key = getKey();
         try {
             cipher.init(Cipher.ENCRYPT_MODE, key);
@@ -45,6 +60,7 @@ public class DesEcbPkcs5PaddingCryptographyService implements CryptographyServic
     @Override
     public void decryptFile(File inFile, File outFile) throws IOException {
         Cipher cipher = getCipher();
+//        Key key = symmetricKeyService.getKey();
         Key key = getKey();
         try {
             cipher.init(Cipher.DECRYPT_MODE, key);

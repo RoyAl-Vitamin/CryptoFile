@@ -11,6 +11,8 @@ import vi.al.ro.service.message_digest.Md5MessageDigestService;
 import vi.al.ro.service.message_digest.MessageDigestService;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Objects;
 
 @Log4j2
@@ -42,7 +44,14 @@ public class MessageDigestController {
         if (!file.exists() || file.isDirectory()) {
             return;
         }
-        String md = messageDigestService.getMessageDigest(file);
+        byte[] byteArray = null;
+        try {
+            byteArray = Files.readAllBytes(file.toPath());
+        } catch (IOException e) {
+            log.error("", e);
+            throw new RuntimeException(e);
+        }
+        String md = messageDigestService.getMessageDigest(byteArray);
         if (Objects.isNull(md)) {
             return;
         }
