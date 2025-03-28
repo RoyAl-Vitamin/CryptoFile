@@ -11,7 +11,7 @@
    <children>
       <HBox alignment="CENTER" prefHeight="75.0" prefWidth="200.0" spacing="15.0" VBox.vgrow="ALWAYS">
          <children>
-            <Label text="Choose file for encryption" />
+            <Label text="Choose file for encryption:" />
             <TextField fx:id="tfFilePath" HBox.hgrow="ALWAYS" />
             <Button minWidth="60.0" mnemonicParsing="false" onAction="#onFileOpenClick" text="Open" />
          </children>
@@ -27,9 +27,10 @@
       </HBox>
       <HBox alignment="CENTER" prefHeight="75.0" prefWidth="200.0" spacing="15.0" VBox.vgrow="ALWAYS">
          <children>
-            <Label text="Choose public key file" />
+            <Label text="Choose public key file:" />
             <TextField fx:id="tfKeyPath" HBox.hgrow="ALWAYS" />
             <Button minWidth="60.0" mnemonicParsing="false" onAction="#onKeyOpenClick" text="Open" />
+            <Button mnemonicParsing="false" onAction="#onKeyGenerateClick" text="Generate" />
          </children>
          <opaqueInsets>
             <Insets />

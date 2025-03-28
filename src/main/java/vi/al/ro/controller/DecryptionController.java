@@ -9,9 +9,13 @@ import javafx.stage.Stage;
 import lombok.extern.log4j.Log4j2;
 import vi.al.ro.service.cryptography.CryptographyService;
 import vi.al.ro.service.cryptography.DesEcbPkcs5PaddingCryptographyService;
+import vi.al.ro.service.key.symmetric.SymmetricKeyDto;
+import vi.al.ro.service.key.symmetric.SymmetricKeyFileService;
+import vi.al.ro.service.key.symmetric.SymmetricKeyService;
 
 import java.io.File;
 import java.io.IOException;
+import java.security.Key;
 
 @Log4j2
 public class DecryptionController {
@@ -63,15 +67,23 @@ public class DecryptionController {
 //            log.error("Полученный файл хранилища ключей не существует или является директорией");
 //            return;
 //        }
+        File symmetrykeyFile = new File(tfKeyPath.getText());
+        if (!symmetrykeyFile.exists() || symmetrykeyFile.isDirectory()) {
+            log.error("Полученный файл хранилища ключей не существует или является директорией");
+            return;
+        }
+        Key key = SymmetricKeyFileService.readKey(symmetrykeyFile);
+        SymmetricKeyService symmetricKeyService = new SymmetricKeyDto(key);
         File inFile = new File(tfFilePath.getText());
         if (!inFile.exists() || inFile.isDirectory()) {
             log.error("Полученный файл для зашифровки не существует или является директорией");
             return;
         }
-//        KeyStoreService service;
+//        AsymmetricKeyService service;
 //        try {
 //            service = new Pkcs12KeyStoreService(ALIAS, PASSWORD, keyStoreFile);
-//        } catch (CertificateException | IOException | NoSuchAlgorithmException | KeyStoreException | UnrecoverableKeyException e) {
+//        } catch (CertificateException | IOException | NoSuchAlgorithmException | KeyStoreException |
+//                 UnrecoverableKeyException e) {
 //            log.error("", e);
 //            return;
 //        }
@@ -85,7 +97,7 @@ public class DecryptionController {
             return;
         }
 //        CryptographyService cryptographyService = new JCECryptographyService(service);
-        CryptographyService cryptographyService = new DesEcbPkcs5PaddingCryptographyService();
+        CryptographyService cryptographyService = new DesEcbPkcs5PaddingCryptographyService(symmetricKeyService);
         try {
             cryptographyService.decryptFile(inFile, outFile);
         } catch (IOException e) {

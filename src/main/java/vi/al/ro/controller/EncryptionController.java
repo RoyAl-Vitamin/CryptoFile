@@ -9,9 +9,14 @@ import javafx.stage.Stage;
 import lombok.extern.log4j.Log4j2;
 import vi.al.ro.service.cryptography.CryptographyService;
 import vi.al.ro.service.cryptography.DesEcbPkcs5PaddingCryptographyService;
+import vi.al.ro.service.key.symmetric.DesKeyGeneratorService;
+import vi.al.ro.service.key.symmetric.SymmetricKeyDto;
+import vi.al.ro.service.key.symmetric.SymmetricKeyFileService;
+import vi.al.ro.service.key.symmetric.SymmetricKeyService;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 
 @Log4j2
 public class EncryptionController {
@@ -55,6 +60,36 @@ public class EncryptionController {
     }
 
     /**
+     * Генерирует симметричный ключ
+     * @param event
+     */
+    @FXML
+    void onKeyGenerateClick(ActionEvent event) {
+        final Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save");
+        fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Symmetric key", "*.ser"));
+        File file = fileChooser.showSaveDialog(stage);
+        if (file.isDirectory()) {
+            log.error("Ошибка выбора файла");
+            return;
+        }
+        if (!file.getPath().endsWith(".key")) {
+            file = new File(file.getPath() + ".ser");
+        }
+        try {
+            if (!file.exists() && !file.createNewFile()) {
+                log.error("Не удалось создать файл");
+            }
+        } catch (IOException e) {
+            log.error("", e);
+            throw new RuntimeException(e);
+        }
+        SymmetricKeyFileService.writeFile(new DesKeyGeneratorService().getKey(), file);
+        tfKeyPath.setText(file.getPath());
+    }
+
+    /**
      * Зашифровывает
      * @param event
      */
@@ -84,17 +119,29 @@ public class EncryptionController {
 //            log.error("", e);
 //            return;
 //        }
-        File outFile = new File(TEMP_DIR, String.format("%s.encrypted", inFile.getName()));
+        File outFile = new File(TEMP_DIR, String.format("%s.encrypted", inFile.getName())); // TODO переписать на FileChooser save dialog
         try {
             if (!outFile.exists() && !outFile.createNewFile()) {
+                log.error("Файл не существует и создать его не удалось");
                 throw new IOException();
             }
         } catch (IOException e) {
             log.error("", e);
             return;
         }
+        if (Objects.isNull(tfKeyPath.getText()) || tfKeyPath.getText().isBlank()) {
+            log.error("Файл ключа не задан");
+            return;
+        }
+        File keyFile = new File(tfKeyPath.getText());
+        if (!keyFile.exists() || keyFile.isDirectory()) {
+            log.error("Полученный файл ключа не существует или является директорией");
+            return;
+        }
+        SymmetricKeyService symmetricKeyService = new SymmetricKeyDto(SymmetricKeyFileService.readKey(keyFile));
 //        CryptographyService cryptographyService = new JCECryptographyService(service);
-        CryptographyService cryptographyService = new DesEcbPkcs5PaddingCryptographyService();
+
+        CryptographyService cryptographyService = new DesEcbPkcs5PaddingCryptographyService(symmetricKeyService);
         try {
             cryptographyService.encryptFile(inFile, outFile);
         } catch (IOException e) {
