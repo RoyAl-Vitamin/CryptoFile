@@ -1,4 +1,4 @@
-package vi.al.ro.service;
+package vi.al.ro.service.db;
 
 import lombok.extern.log4j.Log4j2;
 import org.jooq.CloseableDSLContext;
@@ -71,5 +71,6 @@ public class DataBaseService {
 
     public static void close() {
         service.dslContext.close();
+        log.debug("Database connection close");
     }
 }

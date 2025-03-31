@@ -16,7 +16,7 @@ import javafx.stage.Stage;
 import lombok.extern.log4j.Log4j2;
 import vi.al.ro.controller.modal.KeyStoreSaverController;
 import vi.al.ro.model.fx.KeyStoreModel;
-import vi.al.ro.service.DataBaseService;
+import vi.al.ro.service.db.DataBaseService;
 
 import java.io.IOException;
 import java.net.URL;

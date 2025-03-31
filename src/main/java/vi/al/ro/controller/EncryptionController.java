@@ -7,16 +7,18 @@ import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import lombok.extern.log4j.Log4j2;
-import vi.al.ro.service.cryptography.CryptographyService;
 import vi.al.ro.service.cryptography.DesEcbPkcs5PaddingCryptographyService;
 import vi.al.ro.service.key.symmetric.DesKeyGeneratorService;
 import vi.al.ro.service.key.symmetric.SymmetricKeyDto;
 import vi.al.ro.service.key.symmetric.SymmetricKeyFileService;
 import vi.al.ro.service.key.symmetric.SymmetricKeyService;
+import vi.al.ro.service.scheduled.CryptographyExecutorService;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.concurrent.Future;
 
 @Log4j2
 public class EncryptionController {
@@ -26,8 +28,6 @@ public class EncryptionController {
 
     @FXML
     private TextField tfKeyPath;
-
-    private static final String TEMP_DIR = System.getProperty("java.io.tmpdir");
 
     private final FileChooser fileChooser = new FileChooser();
 
@@ -119,15 +119,12 @@ public class EncryptionController {
 //            log.error("", e);
 //            return;
 //        }
-        File outFile = new File(TEMP_DIR, String.format("%s.encrypted", inFile.getName())); // TODO переписать на FileChooser save dialog
+        File outFile = null;
         try {
-            if (!outFile.exists() && !outFile.createNewFile()) {
-                log.error("Файл не существует и создать его не удалось");
-                throw new IOException();
-            }
+            outFile = getNewFile(event, inFile.getName()).orElseThrow(IOException::new);
         } catch (IOException e) {
             log.error("", e);
-            return;
+            throw new RuntimeException(e);
         }
         if (Objects.isNull(tfKeyPath.getText()) || tfKeyPath.getText().isBlank()) {
             log.error("Файл ключа не задан");
@@ -140,14 +137,40 @@ public class EncryptionController {
         }
         SymmetricKeyService symmetricKeyService = new SymmetricKeyDto(SymmetricKeyFileService.readKey(keyFile));
 //        CryptographyService cryptographyService = new JCECryptographyService(service);
+        Future<Void> task = CryptographyExecutorService.getInstance().addTask(inFile, outFile, new DesEcbPkcs5PaddingCryptographyService(symmetricKeyService)::encryptFile);
+    }
 
-        CryptographyService cryptographyService = new DesEcbPkcs5PaddingCryptographyService(symmetricKeyService);
+    private Optional<File> getNewFile(ActionEvent event, String originalFileName) {
+        String fileExtension = "";
+        if (originalFileName.lastIndexOf(".") != -1 && originalFileName.lastIndexOf(".") != originalFileName.length() - 1) {
+            fileExtension = originalFileName.substring(originalFileName.lastIndexOf(".") + 1);
+        }
+        final Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save");
+        fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Encrypted file", "*.encrypted"));
+        File file = fileChooser.showSaveDialog(stage);
+        if (file.isDirectory()) {
+            log.error("Ошибка выбора файла");
+            return Optional.empty();
+        }
+        String encryptedFileExtension = null;
+        if (fileExtension.isBlank()) {
+            encryptedFileExtension = ".encrypted";
+        } else {
+            encryptedFileExtension = String.format(".%s.encrypted", fileExtension);
+        }
+        if (!file.getPath().endsWith(encryptedFileExtension)) {
+            file = new File(file.getPath() + encryptedFileExtension);
+        }
         try {
-            cryptographyService.encryptFile(inFile, outFile);
+            if (!file.exists() && !file.createNewFile()) {
+                log.error("Не удалось создать файл");
+            }
+            return Optional.of(file);
         } catch (IOException e) {
             log.error("", e);
-            return;
+            throw new RuntimeException(e);
         }
-        log.info("Encrypted file store in {} file size = {}", outFile.getAbsolutePath(), outFile.length());
     }
 }

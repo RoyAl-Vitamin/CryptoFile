@@ -22,7 +22,7 @@ public final class BouncyCastleCryptographyService implements CryptographyServic
     private final AsymmetricKeyService asymmetricKeyStoreService;
 
     @Override
-    public void encryptFile(File inFile, File outFile) throws IOException {
+    public Void encryptFile(File inFile, File outFile) throws IOException {
         CMSEnvelopedDataGenerator cmsEnvelopedDataGenerator = new CMSEnvelopedDataGenerator();
 
         try (InputStream is = new FileInputStream(inFile);
@@ -38,10 +38,11 @@ public final class BouncyCastleCryptographyService implements CryptographyServic
             log.error("", e);
             throw new IOException(e);
         }
+        return null;
     }
 
     @Override
-    public void decryptFile(File inFile, File outFile) throws IOException {
+    public Void decryptFile(File inFile, File outFile) throws IOException {
         try (InputStream is = new FileInputStream(inFile);
              OutputStream os = new FileOutputStream(outFile);) {
             CMSEnvelopedData envelopedData = new CMSEnvelopedData(is.readAllBytes());
@@ -55,5 +56,6 @@ public final class BouncyCastleCryptographyService implements CryptographyServic
             log.error("", e);
             throw new IOException(e);
         }
+        return null;
     }
 }

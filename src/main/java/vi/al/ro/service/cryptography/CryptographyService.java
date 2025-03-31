@@ -5,7 +5,7 @@ import java.io.IOException;
 
 public interface CryptographyService {
 
-    void encryptFile(File inFile, File outFile) throws IOException;
+    Void encryptFile(File inFile, File outFile) throws IOException;
 
-    void decryptFile(File inFile, File outFile) throws IOException;
+    Void decryptFile(File inFile, File outFile) throws IOException;
 }

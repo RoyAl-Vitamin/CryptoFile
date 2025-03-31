@@ -7,15 +7,17 @@ import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import lombok.extern.log4j.Log4j2;
-import vi.al.ro.service.cryptography.CryptographyService;
 import vi.al.ro.service.cryptography.DesEcbPkcs5PaddingCryptographyService;
 import vi.al.ro.service.key.symmetric.SymmetricKeyDto;
 import vi.al.ro.service.key.symmetric.SymmetricKeyFileService;
 import vi.al.ro.service.key.symmetric.SymmetricKeyService;
+import vi.al.ro.service.scheduled.CryptographyExecutorService;
 
 import java.io.File;
 import java.io.IOException;
 import java.security.Key;
+import java.util.Optional;
+import java.util.concurrent.Future;
 
 @Log4j2
 public class DecryptionController {
@@ -27,8 +29,6 @@ public class DecryptionController {
     private TextField tfKeyPath;
 
     private final FileChooser fileChooser = new FileChooser();
-
-    private static final String TEMP_DIR = System.getProperty("java.io.tmpdir");
 
     /**
      * Находит файл для расшифровки
@@ -72,8 +72,6 @@ public class DecryptionController {
             log.error("Полученный файл хранилища ключей не существует или является директорией");
             return;
         }
-        Key key = SymmetricKeyFileService.readKey(symmetrykeyFile);
-        SymmetricKeyService symmetricKeyService = new SymmetricKeyDto(key);
         File inFile = new File(tfFilePath.getText());
         if (!inFile.exists() || inFile.isDirectory()) {
             log.error("Полученный файл для зашифровки не существует или является директорией");
@@ -87,23 +85,42 @@ public class DecryptionController {
 //            log.error("", e);
 //            return;
 //        }
-        File outFile = new File(TEMP_DIR, inFile.getName().substring(0, inFile.getName().lastIndexOf('.')));
+        File outFile = null;
         try {
-            if (!outFile.exists() && !outFile.createNewFile()) {
-                throw new IOException();
-            }
+            outFile = getNewFile(event, inFile.getName().substring(0, inFile.getName().lastIndexOf('.'))).orElseThrow(IOException::new);
         } catch (IOException e) {
             log.error("", e);
-            return;
+            throw new RuntimeException(e);
         }
+        SymmetricKeyService symmetricKeyService = new SymmetricKeyDto(SymmetricKeyFileService.readKey(symmetrykeyFile));
 //        CryptographyService cryptographyService = new JCECryptographyService(service);
-        CryptographyService cryptographyService = new DesEcbPkcs5PaddingCryptographyService(symmetricKeyService);
+        Future<Void> task = CryptographyExecutorService.getInstance().addTask(inFile, outFile, new DesEcbPkcs5PaddingCryptographyService(symmetricKeyService)::decryptFile);
+    }
+
+    private Optional<File> getNewFile(ActionEvent event, String originalFileName) {
+        final Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save");
+        fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("All file", "*.*"));
+        File file = fileChooser.showSaveDialog(stage);
+        if (file.isDirectory()) {
+            log.error("Ошибка выбора файла");
+            return Optional.empty();
+        }
+        if (originalFileName.lastIndexOf(".") != -1) {
+            String fileExtension = originalFileName.substring(originalFileName.lastIndexOf("."));
+            if (!file.getPath().endsWith(fileExtension)) {
+                file = new File(file.getPath() + fileExtension);
+            }
+        }
         try {
-            cryptographyService.decryptFile(inFile, outFile);
+            if (!file.exists() && !file.createNewFile()) {
+                log.error("Не удалось создать файл");
+            }
+            return Optional.of(file);
         } catch (IOException e) {
             log.error("", e);
-            return;
+            throw new RuntimeException(e);
         }
-        log.info("Decrypted file store in {} file size = {}", outFile.getAbsolutePath(), outFile.length());
     }
 }

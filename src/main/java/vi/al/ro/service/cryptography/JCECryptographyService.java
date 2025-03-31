@@ -22,7 +22,7 @@ public final class JCECryptographyService implements CryptographyService {
     private final AsymmetricKeyService asymmetricKeyStoreService;
 
     @Override
-    public void encryptFile(File inFile, File outFile) throws IOException {
+    public Void encryptFile(File inFile, File outFile) throws IOException {
         Cipher cipher = null;
         try {
             cipher = Cipher.getInstance("RSA");
@@ -41,10 +41,11 @@ public final class JCECryptographyService implements CryptographyService {
                 cipherOutputStream.write(array, 0, i);
             }
         }
+        return null;
     }
 
     @Override
-    public void decryptFile(File inFile, File outFile) throws IOException {
+    public Void decryptFile(File inFile, File outFile) throws IOException {
         Cipher cipher = null;
         try {
             cipher = Cipher.getInstance("RSA");
@@ -63,6 +64,7 @@ public final class JCECryptographyService implements CryptographyService {
                 bos.write(array, 0, i);
             }
         }
+        return null;
     }
 
     public static byte[] encrypt(PublicKey key, byte[] plaintext) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {

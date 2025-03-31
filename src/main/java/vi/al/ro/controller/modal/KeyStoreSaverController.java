@@ -6,7 +6,7 @@ import javafx.scene.Node;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import lombok.extern.log4j.Log4j2;
-import vi.al.ro.service.DataBaseService;
+import vi.al.ro.service.db.DataBaseService;
 
 import java.sql.SQLException;
 

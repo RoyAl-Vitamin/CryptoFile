@@ -29,7 +29,7 @@ public class DesEcbPkcs5PaddingCryptographyService implements CryptographyServic
     }
 
     @Override
-    public void encryptFile(File inFile, File outFile) throws IOException {
+    public Void encryptFile(File inFile, File outFile) throws IOException {
         Cipher cipher = getCipher();
         Key key = symmetricKeyService.getKey();
         try {
@@ -48,10 +48,12 @@ public class DesEcbPkcs5PaddingCryptographyService implements CryptographyServic
         }
         byte[] encodedByteArray = base64Service.encode(raw); // Зашифрованные байты, но уже в виде Base64
         Files.write(outFile.toPath(), encodedByteArray);
+        log.info("Encrypted file store in {} file size = {} bytes", outFile.getAbsolutePath(), outFile.length());
+        return null;
     }
 
     @Override
-    public void decryptFile(File inFile, File outFile) throws IOException {
+    public Void decryptFile(File inFile, File outFile) throws IOException {
         Cipher cipher = getCipher();
         Key key = symmetricKeyService.getKey();
         try {
@@ -70,6 +72,8 @@ public class DesEcbPkcs5PaddingCryptographyService implements CryptographyServic
             throw new RuntimeException(e);
         }
         Files.write(outFile.toPath(), raw);
+        log.info("Decrypted file store in {} file size = {} bytes", outFile.getAbsolutePath(), outFile.length());
+        return null;
     }
 
     private Cipher getCipher() {
