@@ -6,13 +6,14 @@
 
     <groupId>vi.al.ro</groupId>
     <artifactId>CryptoFile</artifactId>
-    <version>0.0.1</version>
+    <version>1.0-SNAPSHOT</version>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.fx.version>21</java.fx.version>
+        <java.fx.version>21.0.6</java.fx.version>
+        <lombok.version>1.18.32</lombok.version>
         <junit.jupiter.version>5.9.0</junit.jupiter.version>
         <jooq.version>3.19.7</jooq.version>
         <h2.version>2.2.224</h2.version>
@@ -35,7 +36,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.32</version>
+            <version>${lombok.version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -101,6 +102,27 @@
     <build>
         <finalName>${project.name}</finalName>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.13.0</version>
+                <configuration>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
+                    <annotationProcessorPaths>
+                        <annotationProcessorPath>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </annotationProcessorPath>
+                    </annotationProcessorPaths>
+<!--                    <compilerArgs>-->
+<!--                        <arg>&#45;&#45;add-modules</arg>-->
+<!--                        <arg>ro.al.vi.cryptofile</arg>-->
+<!--                    </compilerArgs>-->
+                </configuration>
+            </plugin>
+
             <plugin>
                 <groupId>org.jooq</groupId>
                 <artifactId>jooq-codegen-maven</artifactId>
