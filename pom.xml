@@ -12,11 +12,12 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.fx.version>21.0.6</java.fx.version>
+        <java.fx.version>21.0.7</java.fx.version>
         <lombok.version>1.18.32</lombok.version>
         <junit.jupiter.version>5.9.0</junit.jupiter.version>
         <jooq.version>3.19.7</jooq.version>
         <h2.version>2.2.224</h2.version>
+        <jmods.module.paths>/home/alex/.jdks/javafx-jmods-21.0.7</jmods.module.paths>
     </properties>
 
     <dependencies>
@@ -120,6 +121,67 @@
 <!--                        <arg>&#45;&#45;add-modules</arg>-->
 <!--                        <arg>ro.al.vi.cryptofile</arg>-->
 <!--                    </compilerArgs>-->
+                </configuration>
+            </plugin>
+
+            <!-- plugin копирует необходимые для работы либы -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.8.1</version>
+                <executions>
+                    <execution>
+                        <id>copy-libs</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/libs</outputDirectory>
+                            <includeScope>runtime</includeScope>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Плагин, который добавляет параметр classpath в файл *.jar/META-INF/MANIFEST.MF все зависимости из папки ./libs -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.4.1</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>libs/</classpathPrefix>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+
+            <!-- Сборка окружения для выполнения приложения -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jlink-plugin</artifactId>
+                <version>3.2.0</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <goal>jlink</goal>
+                    <compress>2</compress>
+                    <noHeaderFiles>true</noHeaderFiles>
+                    <noManPages>true</noManPages>
+                    <verbose>true</verbose>
+                    <stripDebug>true</stripDebug>
+                    <addModules>
+                        <addModule>java.base</addModule>
+                        <addModule>javafx.controls</addModule>
+                        <addModule>javafx.fxml</addModule>
+<!--                        <addModule>org.apache.logging.log4j</addModule>-->
+<!--                        <addModule>org.bouncycastle.pkix</addModule>-->
+<!--                        <addModule>org.bouncycastle.provider</addModule>-->
+<!--                        <addModule>org.jooq</addModule>-->
+                    </addModules>
+                    <modulePaths>${jmods.module.paths}</modulePaths>
                 </configuration>
             </plugin>
 
