@@ -109,4 +109,4 @@ $JAVA_HOME/bin/jpackage --type app-image --name CryptoFile --input target/lib --
 1. Build native exec [1](https://inside.java/2023/11/14/package-javafx-native-exec/);
 2. jPackage [1](https://docs.oracle.com/en/java/javase/21/jpackage/packaging-overview.html);
 3. Automatic modules [1](https://stackoverflow.com/questions/46741907/what-is-an-automatic-module);
-4. Что делать с немодульными зависимостями [1](https://stackoverflow.com/a/77656893/9401964).
+4. Что делать с немодульными зависимостями [1](https://stackoverflow.com/a/77656893/9401964), [2](https://medium.com/azulsystems/using-jlink-to-build-java-runtimes-for-non-modular-applications-9568c5e70ef4).

@@ -8,7 +8,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 @Log4j2
-public class Md5MessageDigestService implements MessageDigestService {
+public class Sha512MessageDigestService implements MessageDigestService {
 
     private final Base64Service base64Service = new BouncyCastleBase64Service();
 
@@ -16,7 +16,7 @@ public class Md5MessageDigestService implements MessageDigestService {
     public String getMessageDigest(byte[] byteArray) {
         MessageDigest md = null;
         try {
-            md = MessageDigest.getInstance("MD5");
+            md = MessageDigest.getInstance("SHA-512");
         } catch (NoSuchAlgorithmException e) {
             log.error("", e);
             throw new RuntimeException(e);
@@ -30,6 +30,6 @@ public class Md5MessageDigestService implements MessageDigestService {
 
     @Override
     public String getName() {
-        return "MD5";
+        return "SHA-512";
     }
 }

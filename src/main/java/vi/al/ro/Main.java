@@ -14,6 +14,12 @@ import java.security.Security;
 
 public class Main extends Application {
 
+    public static void main(String[] args) {
+        DataBaseService.getInstance();
+        CryptographyExecutorService.getInstance();
+        launch();
+    }
+
     @Override
     public void start(Stage stage) throws IOException {
         Security.addProvider(new BouncyCastleProvider());
@@ -32,11 +38,5 @@ public class Main extends Application {
         DataBaseService.close();
         CryptographyExecutorService.shutdown();
         super.stop();
-    }
-
-    public static void main(String[] args) {
-        DataBaseService.getInstance();
-        CryptographyExecutorService.getInstance();
-        launch();
     }
 }
