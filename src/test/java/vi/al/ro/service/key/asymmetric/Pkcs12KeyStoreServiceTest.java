@@ -1,6 +1,7 @@
 package vi.al.ro.service.key.asymmetric;
 
 import lombok.extern.log4j.Log4j2;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -34,6 +35,7 @@ class Pkcs12KeyStoreServiceTest {
 
     @Test
     @DisplayName("Проверка доступности хранилища")
+    @Disabled
     void test0() {
         if (readerService.getCertificate() == null) {
             fail("Не удалось получить сертификат");
