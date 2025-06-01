@@ -3,7 +3,6 @@ package vi.al.ro.service.db;
 import lombok.extern.log4j.Log4j2;
 import org.jooq.CloseableDSLContext;
 import org.jooq.impl.DSL;
-import vi.al.ro.mapper.KeyStoreMapper;
 import vi.al.ro.model.db.KeyStoreEntity;
 
 import java.sql.SQLException;
@@ -38,11 +37,13 @@ public class DataBaseService {
         }
 
         this.dslContext = DSL.using(DB_URL, USER, PASSWORD);
-        this.dslContext.createSequenceIfNotExists("seq_key_store")
+        this.dslContext
+                .createSequenceIfNotExists("seq_key_store")
                 .minvalue(1)
                 .startWith(1)
                 .execute();
-        this.dslContext.createTableIfNotExists("key_store")
+        this.dslContext
+                .createTableIfNotExists("key_store")
                 .column("id", BIGINT.notNull().defaultValue(SEQ_KEY_STORE.nextval()))
                 .column("alias", VARCHAR(255))
                 .column("password", VARCHAR(255))
@@ -53,7 +54,8 @@ public class DataBaseService {
     }
 
     public int insert(String alias, String password, String pathToFile) throws SQLException {
-        return dslContext.insertInto(KEY_STORE)
+        return dslContext
+                .insertInto(KEY_STORE)
                 .set(KEY_STORE.ID, SEQ_KEY_STORE.nextval())
                 .set(KEY_STORE.ALIAS, alias)
                 .set(KEY_STORE.PASSWORD, password)
@@ -62,7 +64,16 @@ public class DataBaseService {
     }
 
     public List<KeyStoreEntity> getAll() throws SQLException {
-        return dslContext.selectFrom(KEY_STORE).fetch(KeyStoreMapper::toEntity);
+        return dslContext
+                .selectFrom(KEY_STORE)
+                .fetch(record -> {
+                    KeyStoreEntity entity = new KeyStoreEntity();
+                    entity.setId(record.get(KEY_STORE.ID));
+                    entity.setAlias(record.get(KEY_STORE.ALIAS));
+                    entity.setPassword(record.get(KEY_STORE.PASSWORD));
+                    entity.setPathToFile(record.get(KEY_STORE.PATH_FILE));
+                    return entity;
+                });
     }
 
     public static DataBaseService getInstance() {

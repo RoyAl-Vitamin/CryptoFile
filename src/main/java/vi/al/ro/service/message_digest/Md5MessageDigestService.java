@@ -8,7 +8,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 @Log4j2
-public class Md5MessageDigestService implements MessageDigestService {
+public final class Md5MessageDigestService implements MessageDigestService {
 
     private final Base64Service base64Service = new BouncyCastleBase64Service();
 
