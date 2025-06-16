@@ -1,5 +1,6 @@
 package vi.al.ro.service.scheduled;
 
+import javafx.concurrent.Task;
 import lombok.extern.log4j.Log4j2;
 
 import java.io.File;
@@ -30,5 +31,9 @@ public class CryptographyExecutorService {
     public static void shutdown() {
         service.executor.shutdown();
         log.debug("ExecutorService shutdown");
+    }
+
+    public Future<?> addTask(Task<Void> task) {
+        return executor.submit(task);
     }
 }

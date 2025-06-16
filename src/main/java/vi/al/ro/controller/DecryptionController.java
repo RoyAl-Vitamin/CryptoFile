@@ -1,5 +1,6 @@
 package vi.al.ro.controller;
 
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -7,15 +8,16 @@ import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import lombok.extern.log4j.Log4j2;
-import vi.al.ro.service.cryptography.DesEcbPkcs5PaddingCryptographyService;
+import vi.al.ro.service.cryptography.DesEcbPkcs5PaddingCryptographyTaskService;
 import vi.al.ro.service.key.symmetric.SymmetricKeyDto;
 import vi.al.ro.service.key.symmetric.SymmetricKeyFileService;
 import vi.al.ro.service.key.symmetric.SymmetricKeyService;
 import vi.al.ro.service.scheduled.CryptographyExecutorService;
+import vi.al.ro.service.scheduled.DecryptionTask;
+import vi.al.ro.service.scheduled.TaskType;
 
 import java.io.File;
 import java.io.IOException;
-import java.security.Key;
 import java.util.Optional;
 import java.util.concurrent.Future;
 
@@ -62,11 +64,6 @@ public class DecryptionController {
      */
     @FXML
     void onDecryptClick(ActionEvent event) {
-//        File keyStoreFile = new File(tfKeyPath.getText());
-//        if (!keyStoreFile.exists() || keyStoreFile.isDirectory()) {
-//            log.error("Полученный файл хранилища ключей не существует или является директорией");
-//            return;
-//        }
         File symmetrykeyFile = new File(tfKeyPath.getText());
         if (!symmetrykeyFile.exists() || symmetrykeyFile.isDirectory()) {
             log.error("Полученный файл хранилища ключей не существует или является директорией");
@@ -77,14 +74,6 @@ public class DecryptionController {
             log.error("Полученный файл для зашифровки не существует или является директорией");
             return;
         }
-//        AsymmetricKeyService service;
-//        try {
-//            service = new Pkcs12KeyStoreService(ALIAS, PASSWORD, keyStoreFile);
-//        } catch (CertificateException | IOException | NoSuchAlgorithmException | KeyStoreException |
-//                 UnrecoverableKeyException e) {
-//            log.error("", e);
-//            return;
-//        }
         File outFile = null;
         try {
             outFile = getNewFile(event, inFile.getName().substring(0, inFile.getName().lastIndexOf('.'))).orElseThrow(IOException::new);
@@ -94,7 +83,10 @@ public class DecryptionController {
         }
         SymmetricKeyService symmetricKeyService = new SymmetricKeyDto(SymmetricKeyFileService.readKey(symmetrykeyFile));
 //        CryptographyService cryptographyService = new JCECryptographyService(service);
-        Future<Void> task = CryptographyExecutorService.getInstance().addTask(inFile, outFile, new DesEcbPkcs5PaddingCryptographyService(symmetricKeyService)::decryptFile);
+//        Future<Void> fTask = CryptographyExecutorService.getInstance().addTask(inFile, outFile, new DesEcbPkcs5PaddingCryptographyService(symmetricKeyService)::decryptFile);
+        Task<Void> task = new DecryptionTask(inFile, outFile, new DesEcbPkcs5PaddingCryptographyTaskService(symmetricKeyService), TaskType.DECRYPT);
+        task.messageProperty().addListener((observableValue, oldValue, newValue) -> log.info("NEW VALUE = {}, OLD VALUE = {}", newValue, oldValue));
+        Future<?> fTask = CryptographyExecutorService.getInstance().addTask(task);
     }
 
     private Optional<File> getNewFile(ActionEvent event, String originalFileName) {

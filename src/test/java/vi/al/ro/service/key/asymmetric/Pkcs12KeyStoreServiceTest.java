@@ -25,11 +25,32 @@ class Pkcs12KeyStoreServiceTest {
 
     private static final String PASSWORD = "password";
 
-    private static final String PATH_TO_TEMP_DIR = System.getProperty("java.io.tmpdir");
-
     @Test
     @DisplayName("Проверка доступности хранилища")
     void test0() {
+        // GIVEN
+        File pfxFile = new File(System.getProperty("java.io.tmpdir"), "keystore.pfx");
+        pfxFile.deleteOnExit();
+        AsymmetricKeyService asymmetricKeyService = getInitializedAsymmetricKeyService(pfxFile);
+
+        // WHEN
+        try {
+            this.readerService = new Pkcs12KeyStoreService(ALIAS, PASSWORD, pfxFile);
+        } catch (CertificateException | IOException | NoSuchAlgorithmException | KeyStoreException |
+                 UnrecoverableKeyException e) {
+            fail(e);
+        }
+
+        // THEN
+        SoftAssertions.assertSoftly(assertions -> {
+            assertions.assertThat(asymmetricKeyService.getCertificate()).isEqualTo(readerService.getCertificate());
+            assertions.assertThat(asymmetricKeyService.getPublicKey()).isEqualTo(readerService.getPublicKey());
+            assertions.assertThat(asymmetricKeyService.getPrivateKey()).isEqualTo(readerService.getPrivateKey());
+            assertions.assertThat(pfxFile.delete()).isTrue();
+        });
+    }
+
+    private AsymmetricKeyService getInitializedAsymmetricKeyService(File pfxFile) {
         AsymmetricKeyService asymmetricKeyService = null;
         try {
             asymmetricKeyService = new RsaKeyGeneratorService();
@@ -49,28 +70,13 @@ class Pkcs12KeyStoreServiceTest {
         } catch (KeyStoreException e) {
             fail(e);
         }
-        File pfxFile = new File(PATH_TO_TEMP_DIR, "keystore.pfx");
-        pfxFile.deleteOnExit();
+
         try (FileOutputStream fos = new FileOutputStream(pfxFile)) {
             // store the keystore protected with password
             keyStore.store(fos, PASSWORD.toCharArray());
         } catch (IOException | CertificateException | KeyStoreException | NoSuchAlgorithmException e) {
             fail(e);
         }
-
-        try {
-            this.readerService = new Pkcs12KeyStoreService(ALIAS, PASSWORD, pfxFile);
-        } catch (CertificateException | IOException | NoSuchAlgorithmException | KeyStoreException |
-                 UnrecoverableKeyException e) {
-            fail(e);
-        }
-
-        AsymmetricKeyService finalAsymmetricKeyService = asymmetricKeyService;
-        SoftAssertions.assertSoftly(assertions -> {
-            assertions.assertThat(finalAsymmetricKeyService.getCertificate()).isEqualTo(readerService.getCertificate());
-            assertions.assertThat(finalAsymmetricKeyService.getPublicKey()).isEqualTo(readerService.getPublicKey());
-            assertions.assertThat(finalAsymmetricKeyService.getPrivateKey()).isEqualTo(readerService.getPrivateKey());
-            assertions.assertThat(pfxFile.delete()).isTrue();
-        });
+        return asymmetricKeyService;
     }
 }
