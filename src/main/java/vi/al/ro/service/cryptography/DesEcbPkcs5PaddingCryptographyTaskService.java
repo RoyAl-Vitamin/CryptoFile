@@ -55,8 +55,11 @@ public class DesEcbPkcs5PaddingCryptographyTaskService implements CryptographyAn
             log.error("", e);
             throw new RuntimeException(e);
         }
+        updateMessage("Исходный файл зашифрован");
         byte[] encodedByteArray = base64Service.encode(raw); // Зашифрованные байты, но уже в виде Base64
+        updateMessage("Зашифрованный файл переведён в Base64");
         Files.write(outFile.toPath(), encodedByteArray);
+        updateMessage("Зашифрованный файл записан");
         log.info("Encrypted file store in {} file size = {} bytes", outFile.getAbsolutePath(), outFile.length());
         return null;
     }
