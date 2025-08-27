@@ -7,7 +7,6 @@ import org.bouncycastle.asn1.x509.BasicConstraints;
 import org.bouncycastle.cert.CertIOException;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
@@ -18,6 +17,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Optional;
 
 @Getter
 public final class RsaKeyGeneratorService implements AsymmetricKeyService {
@@ -29,8 +29,6 @@ public final class RsaKeyGeneratorService implements AsymmetricKeyService {
     private final PublicKey publicKey;
 
     public RsaKeyGeneratorService() throws NoSuchAlgorithmException, NoSuchProviderException, CertIOException, CertificateException, OperatorCreationException {
-        Provider bcProvider = new BouncyCastleProvider();
-        Security.addProvider(bcProvider);
         KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA", "BC");
         generator.initialize(2048);
         KeyPair pair = generator.generateKeyPair();
@@ -66,6 +64,7 @@ public final class RsaKeyGeneratorService implements AsymmetricKeyService {
 
         // -------------------------------------
 
+        Provider bcProvider = Optional.ofNullable(Security.getProvider("BC")).orElseThrow(() -> new NoSuchProviderException("Провайдер BC не инициализирован"));
         this.certificate = new JcaX509CertificateConverter().setProvider(bcProvider).getCertificate(certBuilder.build(contentSigner));
     }
 }

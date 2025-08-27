@@ -6,7 +6,7 @@ import vi.al.ro.service.cryptography.CryptographyAndCheckStatusService;
 
 import java.io.File;
 
-public class DecryptionTask extends Task<Void> {
+public class CryptographyTask extends Task<Void> {
 
     private final File inFile;
 
@@ -18,12 +18,12 @@ public class DecryptionTask extends Task<Void> {
 
     private final ChangeListener<String> changeListener;
 
-    public DecryptionTask(File inFile, File outFile, CryptographyAndCheckStatusService cryptographyService, TaskType taskType) {
+    public CryptographyTask(File inFile, File outFile, CryptographyAndCheckStatusService cryptographyService, TaskType taskType) {
         this.inFile = inFile;
         this.outFile = outFile;
         this.cryptographyService = cryptographyService;
         this.taskType = taskType;
-        this.changeListener = (observableValue, oldValue, newValue) -> DecryptionTask.this.updateMessage(newValue);
+        this.changeListener = (observableValue, oldValue, newValue) -> CryptographyTask.this.updateMessage(newValue);
     }
 
     @Override

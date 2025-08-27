@@ -17,13 +17,12 @@ public class Main extends Application {
     public static void main(String[] args) {
         DataBaseService.getInstance();
         CryptographyExecutorService.getInstance();
+        Security.addProvider(new BouncyCastleProvider());
         launch();
     }
 
     @Override
     public void start(Stage stage) throws IOException {
-        Security.addProvider(new BouncyCastleProvider());
-
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("fxmlMain.fxml"));
         fxmlLoader.setController(new MainController());
         Scene scene = new Scene(fxmlLoader.load());
