@@ -21,16 +21,12 @@ public class MainController implements Initializable {
     private Tab tabEncrypt;
 
     @FXML
-    private Tab tabKeyStore;
-
-    @FXML
     private Tab tabMessageDigest;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         tabEncrypt.setContent(getEncryptParent());
         tabDecrypt.setContent(getDecryptParent());
-        tabKeyStore.setContent(getKeyStoreParent());
         tabMessageDigest.setContent(getMessageDigestParent());
     }
 
@@ -40,10 +36,6 @@ public class MainController implements Initializable {
 
     private Parent getDecryptParent() {
         return getParent(MainController.class.getResource("fxmlDecrypt.fxml"), new DecryptionController());
-    }
-
-    private Parent getKeyStoreParent() {
-        return getParent(MainController.class.getResource("fxmlKeyStore.fxml"), new KeyStoreController());
     }
 
     private Parent getMessageDigestParent() {

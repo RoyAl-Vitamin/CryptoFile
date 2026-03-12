@@ -17,7 +17,7 @@ import java.security.cert.CertificateException;
 import static org.junit.jupiter.api.Assertions.fail;
 
 @Log4j2
-class Pkcs12KeyStoreServiceTest {
+class Pkcs12KeyStoreServiceTests {
 
     private AsymmetricKeyService readerService;
 

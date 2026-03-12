@@ -15,8 +15,6 @@
         <java.fx.version>21.0.7</java.fx.version>
         <lombok.version>1.18.32</lombok.version>
         <junit.jupiter.version>5.9.0</junit.jupiter.version>
-        <jooq.version>3.19.7</jooq.version>
-        <h2.version>2.2.224</h2.version>
         <jmods.module.paths>/home/alex/.jdks/javafx-jmods-21.0.7</jmods.module.paths>
     </properties>
 
@@ -46,34 +44,6 @@
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcpkix-jdk15on</artifactId>
             <version>1.70</version>
-        </dependency>
-
-        <!-- DB -->
-        <dependency>
-            <groupId>org.jooq</groupId>
-            <artifactId>jooq</artifactId>
-            <version>${jooq.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jooq</groupId>
-            <artifactId>jooq-meta</artifactId>
-            <version>${jooq.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jooq</groupId>
-            <artifactId>jooq-codegen</artifactId>
-            <version>${jooq.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.liquibase</groupId>
-            <artifactId>liquibase-core</artifactId>
-            <version>4.18.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <version>${h2.version}</version>
-            <scope>runtime</scope>
         </dependency>
 
         <!-- Logger -->
@@ -149,34 +119,8 @@
 <!--                        <addModule>org.apache.logging.log4j</addModule>-->
 <!--                        <addModule>org.bouncycastle.pkix</addModule>-->
 <!--                        <addModule>org.bouncycastle.provider</addModule>-->
-<!--                        <addModule>org.jooq</addModule>-->
                     </addModules>
                     <modulePaths>${jmods.module.paths}</modulePaths>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.jooq</groupId>
-                <artifactId>jooq-codegen-maven</artifactId>
-                <version>${jooq.version}</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                    </execution>
-                </executions>
-
-                <dependencies>
-                    <dependency>
-                        <groupId>com.h2database</groupId>
-                        <artifactId>h2</artifactId>
-                        <version>${h2.version}</version>
-                    </dependency>
-                </dependencies>
-
-                <configuration>
-                    <configurationFile>./src/main/resources/jooq-config.xml</configurationFile>
                 </configuration>
             </plugin>
         </plugins>

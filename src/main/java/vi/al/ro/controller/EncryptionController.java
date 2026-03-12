@@ -12,7 +12,6 @@ import vi.al.ro.service.cryptography.DesEcbPkcs5PaddingCryptographyTaskService;
 import vi.al.ro.service.key.symmetric.DesKeyGeneratorService;
 import vi.al.ro.service.key.symmetric.SymmetricKeyDto;
 import vi.al.ro.service.key.symmetric.SymmetricKeyFileService;
-import vi.al.ro.service.key.symmetric.SymmetricKeyService;
 import vi.al.ro.service.scheduled.CryptographyExecutorService;
 import vi.al.ro.service.scheduled.CryptographyTask;
 import vi.al.ro.service.scheduled.TaskType;
@@ -119,12 +118,9 @@ public class EncryptionController {
             log.error("Полученный файл ключа не существует или является директорией");
             return;
         }
-        SymmetricKeyService symmetricKeyService = new SymmetricKeyDto(SymmetricKeyFileService.readKey(keyFile));
-//        CryptographyService cryptographyService = new JCECryptographyService(service);
-//        Future<Void> task = CryptographyExecutorService.getInstance().addTask(inFile, outFile, new DesEcbPkcs5PaddingCryptographyService(symmetricKeyService)::encryptFile);
-        Task<Void> task = new CryptographyTask(inFile, outFile, new DesEcbPkcs5PaddingCryptographyTaskService(symmetricKeyService), TaskType.ENCRYPT);
+        Task<Void> task = new CryptographyTask(inFile, outFile, new DesEcbPkcs5PaddingCryptographyTaskService(new SymmetricKeyDto(SymmetricKeyFileService.readKey(keyFile))), TaskType.ENCRYPT);
         task.messageProperty().addListener((observableValue, oldValue, newValue) -> log.info("NEW VALUE = {}, OLD VALUE = {}", newValue, oldValue));
-        Future<?> fTask = CryptographyExecutorService.getInstance().addTask(task);
+        CryptographyExecutorService.getInstance().addTask(task);
     }
 
     private Optional<File> getNewFile(ActionEvent event, String originalFileName) {

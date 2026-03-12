@@ -55,10 +55,10 @@ public class RsaKeyGeneratorServiceTests {
         final var value = "THIS IS A DATA".getBytes(StandardCharsets.UTF_8);
 
         // WHEN
-        Signature sig = Signature.getInstance("SHA256withRSA");
+        var sig = Signature.getInstance("SHA256withRSA");
         sig.initSign(privateKey);
         sig.update(value);
-        byte[] signature = sig.sign();
+        var signature = sig.sign();
         sig.initVerify(publicKey);
         sig.update(value);
         final var keyPairMatches = sig.verify(signature);

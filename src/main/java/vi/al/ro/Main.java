@@ -6,7 +6,6 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import vi.al.ro.controller.MainController;
-import vi.al.ro.service.db.DataBaseService;
 import vi.al.ro.service.scheduled.CryptographyExecutorService;
 
 import java.io.IOException;
@@ -15,7 +14,6 @@ import java.security.Security;
 public class Main extends Application {
 
     public static void main(String[] args) {
-        DataBaseService.getInstance();
         CryptographyExecutorService.getInstance();
         Security.addProvider(new BouncyCastleProvider());
         launch();
@@ -34,7 +32,6 @@ public class Main extends Application {
 
     @Override
     public void stop() throws Exception {
-        DataBaseService.close();
         CryptographyExecutorService.shutdown();
         super.stop();
     }

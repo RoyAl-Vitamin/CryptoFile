@@ -11,7 +11,6 @@ import lombok.extern.log4j.Log4j2;
 import vi.al.ro.service.cryptography.DesEcbPkcs5PaddingCryptographyTaskService;
 import vi.al.ro.service.key.symmetric.SymmetricKeyDto;
 import vi.al.ro.service.key.symmetric.SymmetricKeyFileService;
-import vi.al.ro.service.key.symmetric.SymmetricKeyService;
 import vi.al.ro.service.scheduled.CryptographyExecutorService;
 import vi.al.ro.service.scheduled.CryptographyTask;
 import vi.al.ro.service.scheduled.TaskType;
@@ -19,7 +18,6 @@ import vi.al.ro.service.scheduled.TaskType;
 import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
-import java.util.concurrent.Future;
 
 @Log4j2
 public class DecryptionController {
@@ -81,12 +79,9 @@ public class DecryptionController {
             log.error("", e);
             throw new RuntimeException(e);
         }
-        SymmetricKeyService symmetricKeyService = new SymmetricKeyDto(SymmetricKeyFileService.readKey(symmetrykeyFile));
-//        CryptographyService cryptographyService = new JCECryptographyService(service);
-//        Future<Void> fTask = CryptographyExecutorService.getInstance().addTask(inFile, outFile, new DesEcbPkcs5PaddingCryptographyService(symmetricKeyService)::decryptFile);
-        Task<Void> task = new CryptographyTask(inFile, outFile, new DesEcbPkcs5PaddingCryptographyTaskService(symmetricKeyService), TaskType.DECRYPT);
+        Task<Void> task = new CryptographyTask(inFile, outFile, new DesEcbPkcs5PaddingCryptographyTaskService(new SymmetricKeyDto(SymmetricKeyFileService.readKey(symmetrykeyFile))), TaskType.DECRYPT);
         task.messageProperty().addListener((observableValue, oldValue, newValue) -> log.info("NEW VALUE = {}, OLD VALUE = {}", newValue, oldValue));
-        Future<?> fTask = CryptographyExecutorService.getInstance().addTask(task);
+        CryptographyExecutorService.getInstance().addTask(task);
     }
 
     private Optional<File> getNewFile(ActionEvent event, String originalFileName) {
