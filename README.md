@@ -2,19 +2,18 @@
 
 ## Разработка
 
-Скачать JavaFX с [Gluon](https://gluonhq.com/products/javafx/) 21 версию и распаковать. В Idea IDE установить "VM option":
+Скачать JavaFX с [Gluon](https://gluonhq.com/products/javafx/) 25 версию и распаковать. В Idea IDE установить "VM option":
 
 ```
---module-path "/home/$USER/.jdks/javafx-sdk-21/lib" --add-modules javafx.controls,javafx.fxml
+--module-path "/home/$USER/.jdks/javafx-sdk-25.0.2/lib" --add-modules javafx.controls,javafx.fxml --enable-native-access=javafx.graphics
 ```
 
 ## Планы
 
-1. ~~Убрать зависимость от БД~~;
-2. ~~Переписать, упростив, инструкцию сборки~~;
-3. Поднять версию Java, JavaFx;
-4. Сделать чтение публичного и приватного ключа для шифрования/дешифрования из pfx-хранилища;
-5. Сделать шифрование/дешифрования и имени файла.
+1. ~~Поднять версию Java, JavaFx~~;
+2. Сделать чтение публичного и приватного ключа для шифрования/дешифрования из pfx-хранилища;
+3. Сделать шифрование/дешифрования и имени файла;
+4. Реализовать отображение процесса шифрования/дешифрования.
 
 ## Как собрать
 
@@ -42,20 +41,20 @@ keytool -genkey -alias exampleKey -keyalg RSA -keysize 4096 -validity 365 -keyst
 Установить переменные окружения:
 
 - `$USER` - имя текущего пользователя, в Linux уже установлен;
-- `$JAVA_HOME` - путь до Java 21 (Пример: /home/$USER/.jdks/openjdk-21.0.7);
-- `$PATH_TO_FX` - путь до Java FX SDK (Пример: /home/$USER/.jdks/javafx-sdk-21.0.7/lib);
-- `$PATH_TO_FX_MODS` - путь до Java FX jmods (Пример: /home/$USER/.jdks/javafx-jmods-21.0.7).
+- `$JAVA_HOME` - путь до Java 25 (Пример: /home/$USER/.jdks/openjdk-25.0.2);
+- `$PATH_TO_FX` - путь до Java FX SDK (Пример: /home/$USER/.jdks/javafx-sdk-25.0.2/lib);
+- `$PATH_TO_FX_MODS` - путь до Java FX jmods (Пример: /home/$USER/.jdks/javafx-jmods-25.0.2).
 
 Получить зависимости проекта без учёта зависимостей не из JDK:
 
 ```bash
-$JAVA_HOME/bin/jdeps --module-path $PATH_TO_FX --ignore-missing-deps --multi-release=21 --print-module-deps target/classes/vi/al/ro/Main.class
+$JAVA_HOME/bin/jdeps --module-path $PATH_TO_FX --ignore-missing-deps --multi-release=25 --print-module-deps target/classes/vi/al/ro/Main.class
 ```
 
 Для модульного проекта:
 
 ```bash
-$JAVA_HOME/bin/jdeps --module-path $PATH_TO_FX --multi-release=21 --print-module-deps target/CryptoFile.jar
+$JAVA_HOME/bin/jdeps --module-path $PATH_TO_FX --multi-release=25 --print-module-deps target/CryptoFile.jar
 ```
 
 * Собрать jar-файл:
@@ -67,7 +66,7 @@ mvn clean package
 Получить зависимости проекта без учёта зависимостей не из JDK:
 
 ```bash
-$JAVA_HOME/bin/jdeps --module-path $PATH_TO_FX:"/home/alex/.m2/repository/org/bouncycastle/bcpkix-jdk15on/1.70/bcpkix-jdk15on-1.70.jar":"/home/alex/.m2/repository/org/bouncycastle/bcutil-jdk15on/1.70/bcutil-jdk15on-1.70.jar":"/home/alex/.m2/repository/org/bouncycastle/bcprov-jdk15on/1.70/bcprov-jdk15on-1.70.jar":"/home/alex/.m2/repository/org/apache/logging/log4j/log4j-api/2.23.1/log4j-api-2.23.1.jar" --add-modules org.bouncycastle.pkix,org.bouncycastle.util,org.bouncycastle.provider,org.apache.logging.log4j --multi-release=21 --print-module-deps target/CryptoFile.jar
+$JAVA_HOME/bin/jdeps --module-path $PATH_TO_FX:"/home/alex/.m2/repository/org/bouncycastle/bcpkix-jdk15on/1.70/bcpkix-jdk15on-1.70.jar":"/home/alex/.m2/repository/org/bouncycastle/bcutil-jdk15on/1.70/bcutil-jdk15on-1.70.jar":"/home/alex/.m2/repository/org/bouncycastle/bcprov-jdk15on/1.70/bcprov-jdk15on-1.70.jar":"/home/alex/.m2/repository/org/apache/logging/log4j/log4j-api/2.23.1/log4j-api-2.23.1.jar" --add-modules org.bouncycastle.pkix,org.bouncycastle.util,org.bouncycastle.provider,org.apache.logging.log4j --multi-release=25 --print-module-deps target/CryptoFile.jar
 ```
 
 Для создания дистрибутива из чистого Java приложения нужно указать в параметре `module-path` значение
@@ -94,6 +93,6 @@ $JAVA_HOME/bin/jpackage --type app-image --name CryptoFile --input target/lib --
 ## Ссылки
 
 1. Build native exec [1](https://inside.java/2023/11/14/package-javafx-native-exec/);
-2. jPackage [1](https://docs.oracle.com/en/java/javase/21/jpackage/packaging-overview.html);
+2. jPackage [1](https://docs.oracle.com/en/java/javase/25/jpackage/packaging-overview.html);
 3. Automatic modules [1](https://stackoverflow.com/questions/46741907/what-is-an-automatic-module);
 4. Что делать с немодульными зависимостями [1](https://stackoverflow.com/a/77656893/9401964), [2](https://medium.com/azulsystems/using-jlink-to-build-java-runtimes-for-non-modular-applications-9568c5e70ef4), [3](https://youtu.be/bO6f3U4i0A0?si=kyoaCPCzwUPzCLVW).
