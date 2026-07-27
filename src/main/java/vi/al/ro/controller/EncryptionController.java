@@ -40,8 +40,8 @@ public class EncryptionController {
     @FXML
     void onFileOpenClick(ActionEvent event) {
         final Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        File file = fileChooser.showOpenDialog(stage);
-        if (file != null) {
+        var file = fileChooser.showOpenDialog(stage);
+        if (Objects.nonNull(file)) {
             tfFilePath.setText(file.getPath());
             log.info("File path {}", file.getPath());
         }
@@ -54,8 +54,8 @@ public class EncryptionController {
     @FXML
     void onKeyOpenClick(ActionEvent event) {
         final Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        File file = fileChooser.showOpenDialog(stage);
-        if (file != null) {
+        var file = fileChooser.showOpenDialog(stage);
+        if (Objects.nonNull(file)) {
             tfKeyPath.setText(file.getPath());
             log.info("File path {}", file.getPath());
         }
@@ -67,11 +67,11 @@ public class EncryptionController {
      */
     @FXML
     void onKeyGenerateClick(ActionEvent event) {
-        final Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        FileChooser fileChooser = new FileChooser();
+        final var stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        var fileChooser = new FileChooser();
         fileChooser.setTitle("Save");
         fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Symmetric key", "*.ser"));
-        File file = fileChooser.showSaveDialog(stage);
+        var file = fileChooser.showSaveDialog(stage);
         if (file.isDirectory()) {
             log.error("Ошибка выбора файла");
             return;
@@ -97,7 +97,7 @@ public class EncryptionController {
      */
     @FXML
     void onEncryptClick(ActionEvent event) {
-        File inFile = new File(tfFilePath.getText());
+        var inFile = new File(tfFilePath.getText());
         if (!inFile.exists() || inFile.isDirectory()) {
             log.error("Полученный файл для зашифровки не существует или является директорией");
             return;
@@ -113,7 +113,7 @@ public class EncryptionController {
             log.error("Файл ключа не задан");
             return;
         }
-        File keyFile = new File(tfKeyPath.getText());
+        var keyFile = new File(tfKeyPath.getText());
         if (!keyFile.exists() || keyFile.isDirectory()) {
             log.error("Полученный файл ключа не существует или является директорией");
             return;
@@ -124,15 +124,15 @@ public class EncryptionController {
     }
 
     private Optional<File> getNewFile(ActionEvent event, String originalFileName) {
-        String fileExtension = "";
+        var fileExtension = "";
         if (originalFileName.lastIndexOf(".") != -1 && originalFileName.lastIndexOf(".") != originalFileName.length() - 1) {
             fileExtension = originalFileName.substring(originalFileName.lastIndexOf(".") + 1);
         }
-        final Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        FileChooser fileChooser = new FileChooser();
+        final var stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        var fileChooser = new FileChooser();
         fileChooser.setTitle("Save");
         fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Encrypted file", "*.encrypted"));
-        File file = fileChooser.showSaveDialog(stage);
+        var file = fileChooser.showSaveDialog(stage);
         if (file.isDirectory()) {
             log.error("Ошибка выбора файла");
             return Optional.empty();

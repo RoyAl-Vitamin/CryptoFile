@@ -3,9 +3,12 @@ package vi.al.ro.service.cryptography;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import vi.al.ro.service.key.asymmetric.AsymmetricKeyService;
+import vi.al.ro.service.util.Base64Service;
+import vi.al.ro.service.util.BouncyCastleBase64Service;
 
 import javax.crypto.*;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
@@ -13,11 +16,13 @@ import java.security.PublicKey;
 
 /**
  * Замечание, можно зашифровать только (key_size_in_bits) / 8 - 11 байт
- * так для ключа 2048 bits максимальный размер данных 256 байт (-11 если используется смещение)
+ * так для ключа 2048 bits максимальный размер данных 256 байт (-11 байт если используется смещение)
  */
 @Log4j2
 @RequiredArgsConstructor
-public final class JCECryptographyService implements CryptographyService {
+public final class RsaCryptographyService implements CryptographyService {
+
+    private final Base64Service base64Service = new BouncyCastleBase64Service();
 
     private final AsymmetricKeyService asymmetricKeyStoreService;
 
@@ -45,6 +50,19 @@ public final class JCECryptographyService implements CryptographyService {
     }
 
     @Override
+    public String encryptString(String src) {
+        try {
+            byte[] raw = encrypt(asymmetricKeyStoreService.getPublicKey(), src.getBytes(StandardCharsets.UTF_8));
+            byte[] encodedByteArray = base64Service.encode(raw);
+            return new String(encodedByteArray, StandardCharsets.UTF_8);
+        } catch (NoSuchPaddingException | NoSuchAlgorithmException | InvalidKeyException | IllegalBlockSizeException |
+                 BadPaddingException e) {
+            log.error(e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
     public Void decryptFile(File inFile, File outFile) throws IOException {
         Cipher cipher = null;
         try {
@@ -67,13 +85,26 @@ public final class JCECryptographyService implements CryptographyService {
         return null;
     }
 
-    public static byte[] encrypt(PublicKey key, byte[] plaintext) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+    @Override
+    public String decryptString(String src) {
+        try {
+            byte[] decodedByteArray = base64Service.decode(src.getBytes(StandardCharsets.UTF_8));
+            byte[] raw = decrypt(asymmetricKeyStoreService.getPrivateKey(), decodedByteArray);
+            return new String(raw, StandardCharsets.UTF_8);
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException |
+                 BadPaddingException e) {
+            log.error(e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    private byte[] encrypt(PublicKey key, byte[] plaintext) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
         Cipher cipher = Cipher.getInstance("RSA/ECB/OAEPWithSHA1AndMGF1Padding");
         cipher.init(Cipher.ENCRYPT_MODE, key);
         return cipher.doFinal(plaintext);
     }
 
-    public static byte[] decrypt(PrivateKey key, byte[] ciphertext) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+    private byte[] decrypt(PrivateKey key, byte[] ciphertext) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
         Cipher cipher = Cipher.getInstance("RSA/ECB/OAEPWithSHA1AndMGF1Padding");
         cipher.init(Cipher.DECRYPT_MODE, key);
         return cipher.doFinal(ciphertext);

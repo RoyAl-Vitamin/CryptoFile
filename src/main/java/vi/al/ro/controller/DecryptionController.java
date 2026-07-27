@@ -17,6 +17,7 @@ import vi.al.ro.service.scheduled.TaskType;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.Optional;
 
 @Log4j2
@@ -36,9 +37,9 @@ public class DecryptionController {
      */
     @FXML
     void onFileOpenClick(ActionEvent event) {
-        final Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        File file = fileChooser.showOpenDialog(stage);
-        if (file != null) {
+        final var stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        var file = fileChooser.showOpenDialog(stage);
+        if (Objects.nonNull(file)) {
             tfFilePath.setText(file.getPath());
         }
     }
@@ -49,9 +50,9 @@ public class DecryptionController {
      */
     @FXML
     void onKeyOpenClick(ActionEvent event) {
-        final Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        File file = fileChooser.showOpenDialog(stage);
-        if (file != null) {
+        final var stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        var file = fileChooser.showOpenDialog(stage);
+        if (Objects.nonNull(file)) {
             tfKeyPath.setText(file.getPath());
         }
     }
@@ -62,12 +63,12 @@ public class DecryptionController {
      */
     @FXML
     void onDecryptClick(ActionEvent event) {
-        File symmetrykeyFile = new File(tfKeyPath.getText());
+        var symmetrykeyFile = new File(tfKeyPath.getText());
         if (!symmetrykeyFile.exists() || symmetrykeyFile.isDirectory()) {
             log.error("Полученный файл хранилища ключей не существует или является директорией");
             return;
         }
-        File inFile = new File(tfFilePath.getText());
+        var inFile = new File(tfFilePath.getText());
         if (!inFile.exists() || inFile.isDirectory()) {
             log.error("Полученный файл для зашифровки не существует или является директорией");
             return;
@@ -85,11 +86,11 @@ public class DecryptionController {
     }
 
     private Optional<File> getNewFile(ActionEvent event, String originalFileName) {
-        final Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        FileChooser fileChooser = new FileChooser();
+        final var stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        var fileChooser = new FileChooser();
         fileChooser.setTitle("Save");
         fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("All file", "*.*"));
-        File file = fileChooser.showSaveDialog(stage);
+        var file = fileChooser.showSaveDialog(stage);
         if (file.isDirectory()) {
             log.error("Ошибка выбора файла");
             return Optional.empty();

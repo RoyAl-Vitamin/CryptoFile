@@ -51,8 +51,8 @@ public class MessageDigestController implements Initializable {
 
     @FXML
     void onFileOpenClick(ActionEvent event) {
-        final Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        File file = fileChooser.showOpenDialog(stage);
+        final var stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        var file = fileChooser.showOpenDialog(stage);
         if (Objects.nonNull(file)) {
             tfFilePath.setText(file.getPath());
             log.info("File path {}", file.getPath());
@@ -61,7 +61,7 @@ public class MessageDigestController implements Initializable {
 
     @FXML
     void onMessageDigestCalcClick(ActionEvent event) {
-        File file = new File(tfFilePath.getText());
+        var file = new File(tfFilePath.getText());
         if (!file.exists() || file.isDirectory()) {
             return;
         }
@@ -72,7 +72,7 @@ public class MessageDigestController implements Initializable {
             log.error("", e);
             throw new RuntimeException(e);
         }
-        String md = currentMessageDigestService.getMessageDigest(byteArray);
+        var md = currentMessageDigestService.getMessageDigest(byteArray);
         if (Objects.isNull(md)) {
             return;
         }
@@ -81,18 +81,18 @@ public class MessageDigestController implements Initializable {
 
     @FXML
     void onCopyClick(ActionEvent event) {
-        if (tfMd.getText() == null || "".equals(tfMd.getText())) {
+        if (Objects.isNull(tfMd.getText()) || "".equals(tfMd.getText())) {
             return;
         }
-        Clipboard clipboard = Clipboard.getSystemClipboard();
-        ClipboardContent content = new ClipboardContent();
+        var clipboard = Clipboard.getSystemClipboard();
+        var content = new ClipboardContent();
         content.putString(tfMd.getText());
         clipboard.setContent(content);
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        ObservableList<String> types = FXCollections.observableArrayList(MESSAGE_DIGEST_SERVICE_MAP.keySet().stream().toList());
+        var types = FXCollections.observableArrayList(MESSAGE_DIGEST_SERVICE_MAP.keySet().stream().toList());
         cbMdType.setItems(types);
         cbMdType.setValue(types.getFirst());
         cbMdType.setOnAction(event -> currentMessageDigestService = MESSAGE_DIGEST_SERVICE_MAP.get(cbMdType.getValue()));

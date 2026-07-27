@@ -14,6 +14,7 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.security.InvalidKeyException;
 import java.security.Key;
@@ -65,6 +66,29 @@ public class DesEcbPkcs5PaddingCryptographyTaskService implements CryptographyAn
     }
 
     @Override
+    public String encryptString(String src) {
+        Cipher cipher = getCipher();
+        Key key = symmetricKeyService.getKey();
+        try {
+            cipher.init(Cipher.ENCRYPT_MODE, key);
+        } catch (InvalidKeyException e) {
+            log.error("", e);
+            throw new RuntimeException(e);
+        }
+        byte[] byteArray = src.getBytes(StandardCharsets.UTF_8);
+        byte[] raw = null;
+        try {
+            raw = cipher.doFinal(byteArray);
+        } catch (IllegalBlockSizeException | BadPaddingException e) {
+            log.error("", e);
+            throw new RuntimeException(e);
+        }
+        byte[] encodedByteArray = base64Service.encode(raw);
+        log.info("Encrypted String");
+        return new String(encodedByteArray, StandardCharsets.UTF_8);
+    }
+
+    @Override
     public Void decryptFile(File inFile, File outFile) throws IOException {
         Cipher cipher = getCipher();
         Key key = symmetricKeyService.getKey();
@@ -91,6 +115,29 @@ public class DesEcbPkcs5PaddingCryptographyTaskService implements CryptographyAn
         updateMessage("Дешифрованный файл записан");
         log.info("Decrypted file store in {} file size = {} bytes", outFile.getAbsolutePath(), outFile.length());
         return null;
+    }
+
+    @Override
+    public String decryptString(String src) {
+        Cipher cipher = getCipher();
+        Key key = symmetricKeyService.getKey();
+        try {
+            cipher.init(Cipher.DECRYPT_MODE, key);
+        } catch (InvalidKeyException e) {
+            log.error("", e);
+            throw new RuntimeException(e);
+        }
+        byte[] byteArray = src.getBytes(StandardCharsets.UTF_8);
+        byte[] decodedByteArray = base64Service.decode(byteArray);
+        byte[] raw = null;
+        try {
+            raw = cipher.doFinal(decodedByteArray);
+        } catch (IllegalBlockSizeException | BadPaddingException e) {
+            log.error("", e);
+            throw new RuntimeException(e);
+        }
+        log.info("Decrypted String");
+        return new String(raw, StandardCharsets.UTF_8);
     }
 
     private void updateMessage(String value) {
