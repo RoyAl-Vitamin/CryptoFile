@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.security.*;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
+import java.util.Optional;
 
 @Getter
 public final class Pkcs12KeyStoreService implements AsymmetricKeyService {
@@ -27,6 +28,6 @@ public final class Pkcs12KeyStoreService implements AsymmetricKeyService {
         }
         this.privateKey = (PrivateKey) store.getKey(alias, password.toCharArray());
         this.certificate = store.getCertificate(alias);
-        this.publicKey = this.certificate.getPublicKey();
+        this.publicKey = Optional.ofNullable(this.certificate).map(Certificate::getPublicKey).orElse(null);
     }
 }

@@ -20,7 +20,7 @@ public class DesEcbPkcs5PaddingCryptographyServiceTests {
 
     @SneakyThrows(IOException.class)
     @Test
-    @DisplayName("Проверка шифрования и деширования DES/ECB/PKCS5Padding")
+    @DisplayName("Проверка шифрования и дешифрования DES/ECB/PKCS5Padding")
     void test0() {
         // GIVEN
         var pathToTempInFile = Files.createTempFile("DES_ECB_PKCS5Padding_IN_", ".txt");
